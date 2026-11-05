@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Đăng ký ca làm{% endblock %}
+{% block content %}
+<h1 class="page">Đăng ký ca làm việc (14 ngày tới)</h1>
+<div class="card"><div class="table-responsive"><table class="table table-bordered mb-0 text-center align-middle"><thead><tr><th>Ngày</th>{% for s in shifts %}<th>{{ s.shift_name }}<br><small class="text-muted fw-normal">{{ s.start_time|hm }}-{{ s.end_time|hm }} · tối đa {{ s.max_staff }}</small></th>{% endfor %}</tr></thead><tbody>
+{% for d in days %}<tr><td class="text-start">{{ d.weekday()+1|dow if false else '' }}{{ d|d }}</td>
+  {% for s in shifts %}{% set st = mine.get((s.shift_id, d)) %}{% set n = counts.get((s.shift_id, d), 0) %}<td>
+    {% if st %}<span class="badge {{ {'PENDING':'bg-warning text-dark','APPROVED':'bg-success','REJECTED':'bg-danger'}[st] }}">{{ REG_STATUS[st] }}</span>
+    {% elif n >= s.max_staff %}<span class="text-muted small">Đã đủ người</span>
+    {% else %}<form method="post">{{ csrf_input() }}<input type="hidden" name="shift_id" value="{{ s.shift_id }}"><input type="hidden" name="work_date" value="{{ d.isoformat() }}"><button class="btn btn-sm btn-outline-dark">Đăng ký</button><div class="small text-muted">{{ n }}/{{ s.max_staff }}</div></form>{% endif %}</td>{% endfor %}</tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

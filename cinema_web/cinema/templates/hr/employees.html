@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Nhân viên{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h1 class="page mb-0">Quản lý nhân viên</h1><a class="btn btn-brand" href="{{ url_for('hr.employee_add') }}">+ Thêm nhân viên</a></div>
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Họ tên</th><th>Chức vụ</th><th>Vai trò</th><th>Hình thức</th><th>Lương/giờ</th><th>SĐT</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+{% for e in rows %}<tr class="{{ 'text-muted' if e.status=='RESIGNED' }}"><td class="fw-semibold">{{ e.full_name }}<br><small class="text-muted">{{ e.email }}</small></td><td>{{ e.position }}</td><td>{{ e.role_name }}</td><td>{{ EMP_TYPES[e.employment_type] }}</td><td class="money">{{ e.hourly_wage|money }}</td><td>{{ e.phone }}</td>
+  <td><span class="badge {{ 'bg-success' if e.status=='WORKING' else 'bg-secondary' }}">{{ 'Đang làm' if e.status=='WORKING' else 'Đã nghỉ việc' }}</span></td>
+  <td class="text-end text-nowrap">{% if e.status=='WORKING' %}<a class="btn btn-sm btn-outline-dark" href="{{ url_for('hr.employee_edit', eid=e.employee_id) }}">Sửa</a>
+    <form class="d-inline" method="post" action="{{ url_for('hr.employee_delete', eid=e.employee_id) }}" onsubmit="return confirm('Xác nhận xóa nhân viên (cho nghỉ việc)?')">{{ csrf_input() }}<button class="btn btn-sm btn-outline-danger">Xóa</button></form>{% endif %}</td></tr>
+{% else %}<tr><td colspan="8" class="text-center text-muted py-4">Chưa có nhân viên</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

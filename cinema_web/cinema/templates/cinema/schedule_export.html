@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Xuất lịch chiếu{% endblock %}
+{% block content %}
+<h1 class="page no-print">Xuất lịch chiếu</h1>
+<form class="card card-body mb-3 no-print"><div class="row g-2">
+  <div class="col-md-3"><label class="form-label small mb-0">Từ ngày *</label><input type="date" class="form-control" name="from" value="{{ a.get('from','') }}"></div>
+  <div class="col-md-3"><label class="form-label small mb-0">Đến ngày *</label><input type="date" class="form-control" name="to" value="{{ a.get('to','') }}"></div>
+  <div class="col-md-3"><label class="form-label small mb-0">Rạp</label><select class="form-select" name="cinema"><option value="">Tất cả</option>{% for c in cinemas %}<option value="{{ c.cinema_id }}" {{ 'selected' if a.get('cinema')==c.cinema_id|string }}>{{ c.name }}</option>{% endfor %}</select></div>
+  <div class="col-md-3 d-flex align-items-end"><button class="btn btn-brand w-100">Xem trước</button></div></div></form>
+{% if rows is not none %}
+  <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h5 mb-0">Lịch chiếu {{ lo|d }} - {{ hi|d }}</h2>
+    <div class="no-print"><button class="btn btn-outline-dark btn-sm" onclick="window.print()">In / Lưu PDF</button></div></div>
+  {% if not rows %}<div class="alert alert-secondary">Không có suất chiếu trong khoảng thời gian đã chọn</div>{% else %}
+  <table class="table table-sm table-bordered bg-white"><thead><tr><th>Ngày</th><th>Giờ</th><th>Phim</th><th>Rạp</th><th>Phòng</th></tr></thead><tbody>
+  {% for r in rows %}<tr><td>{{ r.start_time|d }}</td><td>{{ r.start_time|hm }} - {{ r.end_time|hm }}</td><td>{{ r.title }}</td><td>{{ r.cinema }}</td><td>{{ r.room_name }} ({{ r.room_type }})</td></tr>{% endfor %}</tbody></table>{% endif %}
+{% endif %}
+{% endblock %}

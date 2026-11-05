@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Quản lý phim{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h1 class="page mb-0">Quản lý phim</h1>
+  <a class="btn btn-brand" href="{{ url_for('movies.movie_add') }}">+ Thêm phim</a></div>
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0">
+  <thead><tr><th>Phim</th><th>Thể loại</th><th>Năm</th><th>Độ tuổi</th><th>Thời lượng</th><th>Trạng thái</th><th>Suất chiếu</th><th></th></tr></thead>
+  <tbody>
+  {% for m in rows %}
+    <tr><td class="fw-semibold">{{ m.title }}</td>
+      <td class="small">{% for gn in m.genres %}{{ gn.genre_name }}{{ ', ' if not loop.last }}{% endfor %}</td>
+      <td>{{ m.release_year }}</td><td><span class="age">{{ m.age_rating }}</span></td><td>{{ m.duration_min }}'</td>
+      <td><span class="badge {{ 'bg-success' if m.status=='NOW_SHOWING' else ('bg-info text-dark' if m.status=='COMING_SOON' else 'bg-secondary') }}">{{ STATUS_LABEL[m.status] }}</span></td>
+      <td>{{ m.active_shows }}</td>
+      <td class="text-end text-nowrap">
+        <a class="btn btn-sm btn-outline-dark" href="{{ url_for('movies.movie_edit', movie_id=m.movie_id) }}">Sửa</a>
+        {% if m.status != 'STOPPED' %}
+        <form class="d-inline" method="post" action="{{ url_for('movies.movie_stop', movie_id=m.movie_id) }}" onsubmit="return confirm('Xác nhận ngừng chiếu phim này?')">{{ csrf_input() }}<button class="btn btn-sm btn-outline-warning">Ngừng chiếu</button></form>{% endif %}
+        <form class="d-inline" method="post" action="{{ url_for('movies.movie_delete', movie_id=m.movie_id) }}" onsubmit="return confirm('Xác nhận xóa phim?')">{{ csrf_input() }}<button class="btn btn-sm btn-outline-danger">Xóa</button></form>
+      </td></tr>
+  {% else %}<tr><td colspan="8" class="text-center text-muted py-4">Hiện chưa có phim nào</td></tr>
+  {% endfor %}
+  </tbody></table></div></div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Lịch chiếu{% endblock %}
+{% block content %}
+<h1 class="page">Lịch chiếu phim</h1>
+<form class="card card-body mb-3"><div class="row g-2">
+  <div class="col-6 col-md-3"><input type="date" class="form-control" name="date" value="{{ day.isoformat() }}"></div>
+  <div class="col-6 col-md-2"><select class="form-select" name="days">{% for n,l in [(1,'1 ngày'),(3,'3 ngày'),(7,'1 tuần'),(30,'1 tháng')] %}<option value="{{ n }}" {{ 'selected' if a.get('days','1')|string==n|string }}>{{ l }}</option>{% endfor %}</select></div>
+  <div class="col-6 col-md-3"><select class="form-select" name="cinema"><option value="">Tất cả rạp</option>{% for c in cinemas %}<option value="{{ c.cinema_id }}" {{ 'selected' if a.get('cinema')==c.cinema_id|string }}>{{ c.name }}</option>{% endfor %}</select></div>
+  <div class="col-6 col-md-3"><select class="form-select" name="movie"><option value="">Tất cả phim</option>{% for m in movies %}<option value="{{ m.movie_id }}" {{ 'selected' if a.get('movie')==m.movie_id|string }}>{{ m.title }}</option>{% endfor %}</select></div>
+  <div class="col-12 col-md-1"><button class="btn btn-brand w-100">Xem</button></div></div></form>
+{% if not rows %}<div class="alert alert-secondary">Không có lịch chiếu phù hợp với điều kiện đã chọn</div>{% endif %}
+{% set ns = namespace(day=None) %}
+{% for r in rows %}
+  {% if ns.day != r.start_time.strftime('%Y-%m-%d') %}{% set ns.day = r.start_time.strftime('%Y-%m-%d') %}<h2 class="h6 fw-bold mt-3">{{ r.start_time.strftime('%d/%m/%Y') }}</h2>{% endif %}
+  <a class="d-flex justify-content-between card card-body mb-1 py-2 text-decoration-none text-reset" href="{{ url_for('booking.seat_picker', sid=r.showtime_id) }}">
+    <span><strong>{{ r.start_time|hm }}</strong> · {{ r.title }} <span class="age">{{ r.age_rating }}</span></span><span class="text-muted small">{{ r.cinema }} · {{ r.room_name }} ({{ r.room_type }})</span></a>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Sửa loại vé{% endblock %}
+{% block content %}
+<h1 class="page">Cập nhật loại vé &amp; giá vé</h1>
+<form method="post" class="card card-body">{{ csrf_input() }}
+  <div class="row g-3">
+    <div class="col-md-4"><label class="form-label">Tên loại vé *</label><input class="form-control" name="type_name" value="{{ t.type_name }}"></div>
+    <div class="col-md-3"><label class="form-label">Loại phòng</label><select class="form-select" name="room_type"><option value="">Tất cả</option>{% for x in types %}<option {{ 'selected' if t.room_type==x }}>{{ x }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><label class="form-label">Giá cơ bản (đ) *</label><input class="form-control" name="base_price" value="{{ t.base_price|int }}"></div>
+    <div class="col-md-2 d-flex align-items-end"><div class="form-check"><input class="form-check-input" type="checkbox" name="is_active" id="ia" {{ 'checked' if t.is_active }}><label class="form-check-label" for="ia">Đang áp dụng</label></div></div>
+  </div>
+  <h2 class="h6 fw-bold mt-4">Quy tắc giá theo khung giờ / ngày</h2>
+  <table class="table table-sm"><thead><tr><th>Ngày</th><th>Khung giờ</th><th>Giá (đ)</th><th>Xóa</th></tr></thead><tbody>
+  {% for r in rules %}<tr><td>{{ r.day_of_week|dow if r.day_of_week else 'Mọi ngày' }}</td><td>{{ r.time_from|hm }} - {{ r.time_to|hm }}</td>
+    <td><input class="form-control form-control-sm w-auto" name="rule_price_{{ r.rule_id }}" value="{{ r.price|int }}"></td><td><input type="checkbox" class="form-check-input" name="rule_del_{{ r.rule_id }}"></td></tr>
+  {% else %}<tr><td colspan="4" class="text-muted">Chưa có quy tắc riêng - dùng giá cơ bản</td></tr>{% endfor %}
+  <tr class="table-light"><td><select class="form-select form-select-sm" name="new_dow"><option value="">Mọi ngày</option>{% for n in range(1,8) %}<option value="{{ n }}">{{ n|dow }}</option>{% endfor %}</select></td>
+    <td class="d-flex gap-1"><input type="time" class="form-control form-control-sm" name="new_from"><input type="time" class="form-control form-control-sm" name="new_to"></td>
+    <td><input class="form-control form-control-sm w-auto" name="new_price" placeholder="Giá mới"></td><td class="small text-muted">Thêm quy tắc</td></tr>
+  </tbody></table>
+  <div><button class="btn btn-brand">Lưu</button> <a class="btn btn-link" href="{{ url_for('pricing.ticket_types') }}">Hủy</a></div>
+</form>
+{% endblock %}

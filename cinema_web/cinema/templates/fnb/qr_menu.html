@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Gọi món{% endblock %}
+{% block content %}
+<h1 class="page mb-1">Gọi món - {{ loc.label or 'Sảnh' }}</h1>
+<p class="text-muted">Món sẽ được giao đến vị trí của bạn.</p>
+<form method="post">{{ csrf_input() }}
+  {% for key, name in cats.items() %}{% set items = menu|selectattr('category','equalto',key)|list %}{% if items %}
+  <h2 class="h6 fw-bold mt-3">{{ name }}</h2>
+  <div class="row row-cols-1 row-cols-md-3 g-2">
+    {% for p in items %}<div class="col"><div class="card card-body py-2 {{ 'opacity-50' if p.available<=0 }}"><div class="d-flex justify-content-between align-items-center">
+      <div><div class="fw-semibold">{{ p.product_name }}</div><div class="small text-muted">{{ p.price|money }} · {{ 'Hết hàng' if p.available<=0 else 'Còn ' ~ p.available }}</div></div>
+      <input type="number" min="0" max="{{ [p.available,0]|max }}" value="0" class="form-control form-control-sm qty" style="width:4.5rem" data-price="{{ p.price|int }}" name="qty_{{ p.product_id }}" {{ 'disabled' if p.available<=0 }}></div></div></div>{% endfor %}
+  </div>{% endif %}{% endfor %}
+  <div class="card card-body mt-4" style="max-width:520px"><div class="d-flex justify-content-between fw-bold mb-2"><span>Tổng cộng</span><span id="tot" class="money">0 đ</span></div>
+    <label class="form-label">Hình thức thanh toán</label>
+    {% for k,v in methods.items() %}<div class="form-check"><input class="form-check-input" type="radio" name="method" value="{{ k }}" id="m{{ k }}" {{ 'checked' if loop.first }}><label class="form-check-label" for="m{{ k }}">{{ v }}</label></div>{% endfor %}
+    <div class="form-check"><input class="form-check-input" type="radio" name="method" value="AT_COUNTER" id="mAT"><label class="form-check-label" for="mAT">Thanh toán khi nhận món</label></div>
+    <button class="btn btn-brand mt-3">Gửi đơn gọi món</button></div>
+</form>
+{% endblock %}
+{% block scripts %}<script>
+const f=n=>n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' đ';
+function t(){let s=0;document.querySelectorAll('.qty').forEach(i=>s+=(parseInt(i.value)||0)*parseInt(i.dataset.price));document.getElementById('tot').textContent=f(s);}
+document.querySelectorAll('.qty').forEach(i=>i.addEventListener('input',t));
+</script>{% endblock %}

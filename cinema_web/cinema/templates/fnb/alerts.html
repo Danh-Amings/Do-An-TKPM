@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Cảnh báo hạn dùng{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h1 class="page mb-0">Cảnh báo lô cận hạn / hết hạn</h1>
+  <form method="post">{{ csrf_input() }}<input type="hidden" name="action" value="scan"><button class="btn btn-outline-dark">Quét kho ngay</button></form></div>
+<div class="small text-muted mb-2">Hệ thống tự quét kho lúc 00:00 mỗi ngày.</div>
+<div class="card"><table class="table mb-0"><thead><tr><th>Ngày cảnh báo</th><th>Loại</th><th>Lô</th><th>Sản phẩm</th><th>Hạn dùng</th><th class="text-end">Còn lại</th><th></th></tr></thead><tbody>
+{% for a in rows %}<tr class="{{ 'text-muted' if a.is_handled }}"><td>{{ a.alert_date|d }}</td>
+  <td><span class="badge {{ 'bg-danger' if a.alert_type=='EXPIRED' else 'bg-warning text-dark' }}">{{ 'Hết hạn' if a.alert_type=='EXPIRED' else 'Cận hạn' }}</span></td>
+  <td>{{ a.batch_code }}</td><td>{{ a.product_name }}</td><td>{{ a.expiry_date|d }}</td><td class="text-end">{{ a.qty_remaining }}</td>
+  <td class="text-end">{% if a.is_handled %}Đã xử lý{% else %}<form method="post">{{ csrf_input() }}<input type="hidden" name="action" value="handle"><input type="hidden" name="alert_id" value="{{ a.alert_id }}"><button class="btn btn-sm btn-outline-dark">{{ 'Hủy hàng & đánh dấu xử lý' if a.alert_type=='EXPIRED' else 'Đánh dấu đã xử lý' }}</button></form>{% endif %}</td></tr>
+{% else %}<tr><td colspan="7" class="text-center text-muted py-4">Không có cảnh báo nào</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

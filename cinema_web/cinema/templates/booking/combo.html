@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Chọn combo bắp nước{% endblock %}
+{% block content %}
+<h1 class="page">Chọn combo bắp nước <small class="text-muted fs-6">(không bắt buộc)</small></h1>
+<form method="post">{{ csrf_input() }}
+  <div class="row row-cols-1 row-cols-md-3 g-3">
+    {% for p in products %}
+    <div class="col"><div class="card h-100 card-body {{ 'opacity-50' if p.available <= 0 }}">
+      <div class="d-flex justify-content-between"><strong>{{ p.product_name }}</strong>{% if p.is_combo %}<span class="badge bg-warning text-dark">Combo</span>{% endif %}</div>
+      <div class="text-muted small">{{ p.unit }} · {{ p.price|money }}</div>
+      <div class="small {{ 'text-danger' if p.available <= 0 else 'text-success' }}">{{ 'Hết hàng' if p.available <= 0 else 'Còn ' ~ p.available }}</div>
+      <input type="number" min="0" max="{{ [p.available,0]|max }}" class="form-control mt-2" name="qty_{{ p.product_id }}" value="{{ cart.combos.get(p.product_id|string, 0) }}" {{ 'disabled' if p.available <= 0 }}>
+    </div></div>
+    {% else %}<div class="col-12 text-muted">Hiện chưa có món nào để bán</div>
+    {% endfor %}
+  </div>
+  <div class="mt-4 d-flex gap-2">
+    <button class="btn btn-brand">Tiếp tục thanh toán</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('booking.seat_picker', sid=show_id) }}">Quay lại chọn ghế</a>
+  </div>
+</form>
+{% endblock %}

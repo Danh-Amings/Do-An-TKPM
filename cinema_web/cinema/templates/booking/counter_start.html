@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Bán vé tại quầy{% endblock %}
+{% block content %}
+<h1 class="page">Bán vé tại quầy</h1>
+<form method="post" class="card card-body" style="max-width:640px">{{ csrf_input() }}
+  <label class="form-label">Số điện thoại khách hàng *</label>
+  <input class="form-control" name="phone" id="phone" placeholder="0901234567" required>
+  <div id="cust" class="small mt-1 text-muted"></div>
+  <label class="form-label mt-3">Họ tên (chỉ cần nhập với khách mới)</label>
+  <input class="form-control" name="full_name" id="fname">
+  <label class="form-label mt-3">Suất chiếu *</label>
+  <select class="form-select" name="showtime_id" required><option value="">-- Chọn suất chiếu --</option>
+    {% for s in shows %}<option value="{{ s.showtime_id }}" {{ 'selected' if pre==s.showtime_id }}>{{ s.start_time|dt }} · {{ s.title }} · {{ s.room_name }} ({{ s.room_type }})</option>{% endfor %}</select>
+  <button class="btn btn-brand mt-3">Tiếp tục chọn ghế</button>
+</form>
+{% endblock %}
+{% block scripts %}<script>
+const ph=document.getElementById('phone'), out=document.getElementById('cust');
+ph.addEventListener('blur', async()=>{ if(!ph.value.trim()) return;
+  const d=await (await fetch('/api/customers/lookup?phone='+encodeURIComponent(ph.value.trim()))).json();
+  out.textContent = d.found ? `Khách hiện có: ${d.name} · hạng ${d.tier} · ${d.points} điểm` : 'Khách mới - vui lòng nhập họ tên để tạo hồ sơ'; });
+</script>{% endblock %}

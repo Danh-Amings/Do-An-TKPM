@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Báo cáo thống kê{% endblock %}
+{% block content %}
+<h1 class="page">Báo cáo &amp; thống kê</h1>
+<div class="row row-cols-1 row-cols-md-3 g-3">
+{% for ep, name, desc in [('reports.ticket_revenue','Doanh thu vé','Theo phim, rạp, ngày hoặc tháng'),('reports.fnb_revenue','Doanh thu F&B','Theo sản phẩm, kèm vé và QR Order'),('reports.occupancy','Tỷ lệ lấp đầy phòng chiếu','Vé bán / tổng ghế của từng suất'),('reports.stock_report','Tồn kho & cảnh báo hạn dùng','Theo lô hàng'),('reports.attendance_report','Chấm công & vi phạm','Giờ làm, đi muộn, quên check-out'),('reports.revenue_share','Chia sẻ doanh thu nhà phát hành','Theo hợp đồng từng phim')] %}
+<div class="col"><a class="text-decoration-none text-reset" href="{{ url_for(ep) }}"><div class="card card-body h-100"><div class="fw-bold">{{ name }}</div><div class="small text-muted">{{ desc }}</div></div></a></div>
+{% endfor %}</div>
+{% endblock %}

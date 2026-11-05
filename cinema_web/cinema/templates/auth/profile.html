@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Hồ sơ cá nhân{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-7">
+<div class="card"><div class="card-body p-4">
+  <h1 class="page">Hồ sơ cá nhân</h1>
+  <form method="post" enctype="multipart/form-data">
+    {{ csrf_input() }}
+    <div class="row g-3">
+      <div class="col-md-4 text-center">
+        {% if g.user.avatar_url %}<img src="{{ g.user.avatar_url }}" class="rounded-circle mb-2" style="width:120px;height:120px;object-fit:cover">
+        {% else %}<div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center mb-2" style="width:120px;height:120px;font-size:2.5rem">{{ g.user.full_name[:1] }}</div>{% endif %}
+        <input class="form-control form-control-sm" type="file" name="avatar" accept="image/*">
+        <div class="form-text">Tối đa 5MB</div>
+      </div>
+      <div class="col-md-8">
+        <div class="mb-3"><label class="form-label">Email</label><input class="form-control" value="{{ g.user.email or '' }}" disabled></div>
+        <div class="mb-3"><label class="form-label">Họ và tên</label><input class="form-control" name="full_name" value="{{ g.user.full_name }}"></div>
+        <div class="mb-3"><label class="form-label">Số điện thoại</label><input class="form-control" name="phone" value="{{ g.user.phone or '' }}"></div>
+        <div class="row">
+          <div class="col-6 mb-3"><label class="form-label">Ngày sinh</label><input class="form-control" type="date" name="birth_date" value="{{ g.user.birth_date or '' }}"></div>
+          <div class="col-6 mb-3"><label class="form-label">Giới tính</label>
+            <select class="form-select" name="gender"><option value="">--</option>
+              {% for v,l in [('M','Nam'),('F','Nữ'),('OTHER','Khác')] %}<option value="{{ v }}" {{ 'selected' if g.user.gender==v }}>{{ l }}</option>{% endfor %}</select></div>
+        </div>
+        {% if g.customer %}<p class="text-muted small">Điểm thưởng hiện có: <strong>{{ g.customer.total_points }}</strong></p>{% endif %}
+        <button class="btn btn-brand">Lưu</button>
+      </div>
+    </div>
+  </form>
+</div></div></div></div>
+{% endblock %}

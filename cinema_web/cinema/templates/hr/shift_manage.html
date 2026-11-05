@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Duyệt ca làm việc{% endblock %}
+{% block content %}
+<h1 class="page">Duyệt đăng ký ca làm việc</h1>
+<div class="small text-muted mb-2">Nhân viên Part-time được ưu tiên hiển thị trước.</div>
+<div class="card"><table class="table mb-0"><thead><tr><th>Ngày</th><th>Ca</th><th>Nhân viên</th><th>Hình thức</th><th>Đã duyệt</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.work_date|d }}</td><td>{{ r.shift_name }}</td><td>{{ r.full_name }}</td><td>{{ EMP_TYPES[r.employment_type] }}</td><td>{{ r.ok }}/{{ r.max_staff }}</td>
+  <td class="text-end"><form method="post" class="d-inline-flex gap-1">{{ csrf_input() }}<input type="hidden" name="registration_id" value="{{ r.registration_id }}">
+    <button name="action" value="approve" class="btn btn-sm btn-success">Duyệt</button><button name="action" value="reject" class="btn btn-sm btn-outline-danger">Từ chối</button></form></td></tr>
+{% else %}<tr><td colspan="6" class="text-center text-muted py-4">Không có đăng ký nào chờ duyệt</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

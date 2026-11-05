@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Đổi / hủy vé{% endblock %}
+{% block content %}
+<h1 class="page">Tra cứu đơn để đổi / hủy vé</h1>
+<form class="row g-2 mb-3"><div class="col-sm-6 col-md-4"><input class="form-control" name="code" value="{{ code }}" placeholder="Mã đơn hoặc số điện thoại"></div><div class="col-auto"><button class="btn btn-brand">Tìm</button></div></form>
+{% if code %}<div class="card"><table class="table mb-0"><thead><tr><th>Mã đơn</th><th>Khách</th><th>Phim</th><th>Suất</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.booking_code }}</td><td>{{ r.full_name }}<br><small class="text-muted">{{ r.phone }}</small></td><td>{{ r.title }}</td><td>{{ r.start_time|dt }}</td><td>{{ BOOKING_STATUS.get(r.status, r.status) }}</td>
+  <td class="text-end"><a class="btn btn-sm btn-outline-dark" href="{{ url_for('booking.booking_detail', bid=r.booking_id) }}">Mở</a></td></tr>
+{% else %}<tr><td colspan="6" class="text-center text-muted py-3">Không tìm thấy đơn phù hợp</td></tr>{% endfor %}
+</tbody></table></div>{% endif %}
+{% endblock %}

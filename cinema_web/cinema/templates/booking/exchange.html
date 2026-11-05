@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Đổi suất chiếu{% endblock %}
+{% block content %}
+<h1 class="page">Đổi suất chiếu - đơn {{ b.booking_code }}</h1>
+<p class="text-muted">Phim <strong>{{ b.title }}</strong> · hiện tại {{ b.start_time|dt }} · cần chọn lại <strong>{{ n }}</strong> ghế ở suất mới (cùng loại phòng {{ b.room_type }}).</p>
+{% if not rows %}<div class="alert alert-secondary">Hiện không có suất chiếu khác phù hợp để đổi</div>{% endif %}
+<div class="list-group">
+  {% for r in rows %}
+  <a class="list-group-item list-group-item-action d-flex justify-content-between" href="{{ url_for('booking.seat_picker', sid=r.showtime_id, exchange=b.booking_id) }}">
+    <span>{{ r.start_time|dt }} · {{ r.cinema }} · {{ r.room_name }}</span><span class="text-muted">còn {{ r.free_seats }} ghế</span></a>
+  {% endfor %}
+</div>
+<a class="btn btn-link mt-3" href="{{ url_for('booking.booking_detail', bid=b.booking_id) }}">Quay lại</a>
+{% endblock %}

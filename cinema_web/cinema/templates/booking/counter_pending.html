@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Thu tiền đơn online{% endblock %}
+{% block content %}
+<h1 class="page">Đơn đặt online - thanh toán tại quầy</h1>
+<form class="row g-2 mb-3"><div class="col-sm-6 col-md-4"><input class="form-control" name="code" value="{{ code }}" placeholder="Mã đơn hoặc số điện thoại"></div><div class="col-auto"><button class="btn btn-brand">Tìm</button></div></form>
+<div class="card"><table class="table mb-0"><thead><tr><th>Mã đơn</th><th>Khách</th><th>Phim</th><th>Suất</th><th class="text-end">Số tiền</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.booking_code }}</td><td>{{ r.full_name }}<br><small class="text-muted">{{ r.phone }}</small></td><td>{{ r.title }}</td><td>{{ r.start_time|dt }}</td><td class="text-end money">{{ r.total_amount|money }}</td>
+  <td class="text-end"><form method="post">{{ csrf_input() }}<input type="hidden" name="booking_id" value="{{ r.booking_id }}"><button class="btn btn-sm btn-brand">Xác nhận thu tiền</button></form></td></tr>
+{% else %}<tr><td colspan="6" class="text-center text-muted py-3">Không có đơn nào chờ thanh toán tại quầy</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Tìm kiếm phim{% endblock %}
+{% block content %}
+<h1 class="page">Tìm kiếm phim</h1>
+<form class="card card-body mb-4" autocomplete="off">
+  <div class="row g-2">
+    <div class="col-12 position-relative">
+      <input class="form-control form-control-lg" id="q" name="q" value="{{ kw }}" placeholder="Tên phim, diễn viên hoặc thể loại...">
+      <div id="sugg" class="list-group position-absolute w-100 shadow" style="z-index:20"></div>
+    </div>
+    <div class="col-6 col-md-3"><select class="form-select" name="genre"><option value="">Thể loại</option>
+      {% for gn in genres %}<option value="{{ gn.genre_id }}" {{ 'selected' if a.get('genre')==gn.genre_id|string }}>{{ gn.genre_name }}</option>{% endfor %}</select></div>
+    <div class="col-6 col-md-2"><input class="form-control" name="year" placeholder="Năm SX" value="{{ a.get('year','') }}"></div>
+    <div class="col-6 col-md-2"><select class="form-select" name="age"><option value="">Độ tuổi</option>
+      {% for x in ages %}<option {{ 'selected' if a.get('age')==x }}>{{ x }}</option>{% endfor %}</select></div>
+    <div class="col-6 col-md-2"><select class="form-select" name="city"><option value="">Thành phố</option>
+      {% for c in cities %}<option {{ 'selected' if a.get('city')==c.city }}>{{ c.city }}</option>{% endfor %}</select></div>
+    <div class="col-12 col-md-3"><select class="form-select" name="cinema"><option value="">Rạp</option>
+      {% for c in cinemas %}<option value="{{ c.cinema_id }}" {{ 'selected' if a.get('cinema')==c.cinema_id|string }}>{{ c.name }}</option>{% endfor %}</select></div>
+    <div class="col-12"><button class="btn btn-brand">Tìm kiếm</button> <a class="btn btn-link" href="{{ url_for('movies.movie_search') }}">Xóa lọc</a></div>
+  </div>
+</form>
+
+{% if searched %}
+  <h2 class="page">Kết quả ({{ movies|length }})</h2>
+  {% if not movies %}<div class="alert alert-secondary">Không tìm thấy phim phù hợp với từ khóa của bạn</div>{% endif %}
+{% else %}
+  <h2 class="page">Gợi ý: phim nổi bật / đang chiếu / sắp chiếu</h2>
+  {% set movies = suggestions %}
+{% endif %}
+<div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-3">
+  {% for m in movies %}
+  <div class="col"><a class="text-decoration-none text-reset" href="{{ url_for('movies.movie_detail', movie_id=m.movie_id) }}">
+    <div class="card movie-card h-100">{% if m.poster_url %}<img src="{{ m.poster_url }}" alt="">{% else %}<div class="poster-ph">{{ m.title }}</div>{% endif %}
+      <div class="card-body p-2"><div class="fw-semibold small">{{ m.title }}</div><span class="age">{{ m.age_rating }}</span>
+        <small class="text-muted">{{ m.release_year }}</small></div></div></a></div>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/suggest.js') }}"></script>{% endblock %}

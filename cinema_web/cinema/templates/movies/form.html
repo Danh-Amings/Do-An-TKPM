@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Sửa phim' if movie else 'Thêm phim mới' }}{% endblock %}
+{% block content %}
+<h1 class="page">{{ 'Cập nhật thông tin phim' if movie else 'Thêm phim mới' }}</h1>
+<form method="post" enctype="multipart/form-data" class="card card-body">
+  {{ csrf_input() }}
+  <div class="row g-3">
+    <div class="col-md-8"><label class="form-label">Tên phim *</label><input class="form-control" name="title" value="{{ d.get('title','') }}"></div>
+    <div class="col-md-2"><label class="form-label">Năm SX *</label><input class="form-control" name="release_year" value="{{ d.get('release_year','') }}"></div>
+    <div class="col-md-2"><label class="form-label">Độ tuổi *</label><select class="form-select" name="age_rating">
+      {% for x in ages %}<option {{ 'selected' if d.get('age_rating')==x }}>{{ x }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><label class="form-label">Thời lượng (phút) *</label><input class="form-control" name="duration_min" value="{{ d.get('duration_min','') }}"></div>
+    <div class="col-md-3"><label class="form-label">Ngày khởi chiếu</label><input class="form-control" type="date" name="release_date" value="{{ d.get('release_date') or '' }}"></div>
+    <div class="col-md-3"><label class="form-label">Trạng thái</label><select class="form-select" name="status">
+      {% for k,v in STATUS_LABEL.items() %}<option value="{{ k }}" {{ 'selected' if d.get('status')==k }}>{{ v }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><label class="form-label">Đạo diễn</label><input class="form-control" name="director" value="{{ d.get('director') or '' }}"></div>
+    <div class="col-12"><label class="form-label d-block">Thể loại *</label>
+      {% for gn in genres %}<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" name="genres" value="{{ gn.genre_id }}" id="g{{ gn.genre_id }}" {{ 'checked' if gn.genre_id in d.get('genres',[]) }}><label class="form-check-label" for="g{{ gn.genre_id }}">{{ gn.genre_name }}</label></div>{% endfor %}</div>
+    <div class="col-12"><label class="form-label">Diễn viên</label><input class="form-control" name="cast_list" value="{{ d.get('cast_list') or '' }}"></div>
+    <div class="col-12"><label class="form-label">Mô tả</label><textarea class="form-control" rows="3" name="description">{{ d.get('description') or '' }}</textarea></div>
+    <div class="col-md-6"><label class="form-label">Hình ảnh (tải lên)</label><input class="form-control" type="file" name="poster" accept="image/*">
+      <input class="form-control mt-1" name="poster_url" placeholder="hoặc dán đường dẫn ảnh" value="{{ d.get('poster_url') or '' }}"></div>
+    <div class="col-md-6"><label class="form-label">Trailer (đường dẫn)</label><input class="form-control" name="trailer_url" value="{{ d.get('trailer_url') or '' }}"></div>
+    <div class="col-12"><hr><div class="small text-muted mb-1">Hợp đồng phát hành (dùng cho báo cáo chia sẻ doanh thu, không bắt buộc)</div></div>
+    <div class="col-md-6"><select class="form-select" name="distributor_id"><option value="">-- Nhà phát hành --</option>
+      {% for x in distributors %}<option value="{{ x.distributor_id }}" {{ 'selected' if d.get('distributor_id')|string==x.distributor_id|string }}>{{ x.name }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><input class="form-control" name="share_percent" placeholder="% chia sẻ doanh thu" value="{{ d.get('share_percent','') }}"></div>
+  </div>
+  <div class="mt-4"><button class="btn btn-brand">Lưu</button> <a class="btn btn-link" href="{{ url_for('movies.manage_movies') }}">Hủy</a></div>
+</form>
+{% endblock %}

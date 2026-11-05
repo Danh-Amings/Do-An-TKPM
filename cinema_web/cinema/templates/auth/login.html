@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Đăng nhập{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-5 col-lg-4">
+<div class="card"><div class="card-body p-4">
+  <h1 class="page">Đăng nhập</h1>
+  <form method="post" novalidate>
+    {{ csrf_input() }}
+    <input type="hidden" name="next" value="{{ request.args.get('next','') }}">
+    <div class="mb-3"><label class="form-label">Email</label><input class="form-control" type="email" name="email" value="{{ email }}" autofocus></div>
+    <div class="mb-3"><label class="form-label">Mật khẩu</label><input class="form-control" type="password" name="password"></div>
+    <button class="btn btn-brand w-100">Đăng nhập</button>
+  </form>
+  <div class="d-flex justify-content-between mt-3 small">
+    <a href="{{ url_for('auth.forgot') }}">Quên mật khẩu?</a><a href="{{ url_for('auth.register') }}">Đăng ký thành viên</a>
+  </div>
+</div></div></div></div>
+{% endblock %}

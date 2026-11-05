@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% from "reports/_macros.html" import export_bar %}
+{% block title %}Báo cáo tồn kho{% endblock %}
+{% block content %}
+<h1 class="page">Báo cáo tồn kho &amp; cảnh báo hạn dùng</h1>
+{{ export_bar() }}
+<div class="row g-3"><div class="col-lg-4"><div class="card"><div class="card-header fw-bold">Tồn còn hạn theo sản phẩm</div><table class="table table-sm mb-0"><tbody>
+{% for s in summary %}<tr><td>{{ s.product_name }}</td><td class="text-end">{{ s.qty|int }}</td></tr>{% else %}<tr><td class="text-muted text-center">Kho trống</td></tr>{% endfor %}</tbody></table></div></div>
+<div class="col-lg-8"><div class="card"><table class="table table-sm mb-0"><thead><tr><th>Lô</th><th>Sản phẩm</th><th class="text-end">Còn lại</th><th>Nhập</th><th>HSD</th><th>Tình trạng</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.batch_code }}</td><td>{{ r.product_name }}</td><td class="text-end">{{ r.qty_remaining }}</td><td>{{ r.import_date|d }}</td><td>{{ r.expiry_date|d }}</td>
+  <td>{% if r.state=='EXPIRED' %}<span class="badge bg-danger">Hết hạn</span>{% elif r.state=='NEAR_EXPIRY' %}<span class="badge bg-warning text-dark">Cận hạn</span>{% elif r.state=='EMPTY' %}<span class="badge bg-secondary">Hết hàng</span>{% else %}<span class="badge bg-success">Còn hạn</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div></div></div>
+{% endblock %}

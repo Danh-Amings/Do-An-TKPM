@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "reports/_macros.html" import range_form, export_bar %}
+{% block title %}Doanh thu vé{% endblock %}
+{% block content %}
+<h1 class="page">Báo cáo doanh thu vé</h1>
+{% set extra %}<div class="col-6 col-md-3"><label class="form-label small mb-0">Thống kê theo</label><select class="form-select" name="by">{% for k,v in [('movie','Phim'),('cinema','Rạp'),('day','Ngày'),('month','Tháng')] %}<option value="{{ k }}" {{ 'selected' if by==k }}>{{ v }}</option>{% endfor %}</select></div>{% endset %}
+{{ range_form(lo, hi, extra) }}
+{% if not rows %}<div class="alert alert-secondary">Không có dữ liệu trong khoảng thời gian đã chọn</div>{% else %}
+{{ export_bar() }}
+<div class="row g-3"><div class="col-lg-7"><div class="card"><table class="table mb-0"><thead><tr><th>{{ label }}</th><th class="text-end">Số vé</th><th class="text-end">Doanh thu</th></tr></thead><tbody>
+{% for k, v in rows %}<tr><td>{{ k }}</td><td class="text-end">{{ v[0] }}</td><td class="text-end money">{{ v[1]|money }}</td></tr>{% endfor %}
+<tr class="fw-bold table-light"><td>Tổng</td><td class="text-end">{{ count }}</td><td class="text-end money">{{ total|money }}</td></tr></tbody></table></div></div>
+<div class="col-lg-5"><div class="card card-body"><canvas id="ch" height="240"></canvas></div></div></div>{% endif %}
+{% endblock %}
+{% block scripts %}{% if rows %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>new Chart(document.getElementById('ch'),{type:'{{ 'line' if by in ('day','month') else 'bar' }}',data:{labels:{{ rows|map('first')|list|tojson }},datasets:[{label:'Doanh thu (đ)',data:{{ rows|map(attribute=1)|map('last')|list|tojson }},backgroundColor:'#c81e3a',borderColor:'#c81e3a'}]},options:{plugins:{legend:{display:false}}}});</script>{% endif %}{% endblock %}

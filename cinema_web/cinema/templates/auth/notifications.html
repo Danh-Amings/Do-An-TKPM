@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Thông báo{% endblock %}
+{% block content %}
+<h1 class="page">Thông báo</h1>
+{% if not rows %}<p class="text-muted">Chưa có thông báo nào.</p>{% endif %}
+<div class="list-group">
+  {% for n in rows %}
+  <div class="list-group-item"><div class="d-flex justify-content-between"><strong>{{ n.title }}</strong><small class="text-muted">{{ n.created_at|dt }}</small></div>
+    {% if n.content %}<div class="small" style="white-space:pre-line">{{ n.content }}</div>{% endif %}</div>
+  {% endfor %}
+</div>
+{% endblock %}

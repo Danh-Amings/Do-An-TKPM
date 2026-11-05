@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ m.title }}{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-md-3">
+    {% if m.poster_url %}<img class="poster rounded" src="{{ m.poster_url }}" alt="">{% else %}<div class="poster-ph rounded">{{ m.title }}</div>{% endif %}
+  </div>
+  <div class="col-md-9">
+    <h1 class="page mb-1">{{ m.title }} <span class="age">{{ m.age_rating }}</span></h1>
+    <div class="text-muted mb-2">{{ STATUS_LABEL[m.status] }} · {{ m.duration_min }} phút · Năm SX {{ m.release_year }}
+      {% if m.release_date %}· Khởi chiếu {{ m.release_date|d }}{% endif %}</div>
+    <p class="mb-1"><strong>Thể loại:</strong> {% for gn in m.genres %}{{ gn.genre_name }}{{ ', ' if not loop.last }}{% endfor %}</p>
+    {% if m.director %}<p class="mb-1"><strong>Đạo diễn:</strong> {{ m.director }}</p>{% endif %}
+    {% if m.cast_list %}<p class="mb-1"><strong>Diễn viên:</strong> {{ m.cast_list }}</p>{% endif %}
+    <p class="mb-1"><strong>Điểm đánh giá:</strong> {{ m.avg_rating }}/10</p>
+    {% if m.description %}<p class="mt-3">{{ m.description }}</p>{% endif %}
+    {% if m.trailer_url %}<a class="btn btn-outline-dark btn-sm" target="_blank" rel="noopener" href="{{ m.trailer_url }}">▶ Xem trailer</a>{% endif %}
+  </div>
+</div>
+<hr class="my-4">
+<h2 class="page">Suất chiếu</h2>
+{% if not grouped %}<div class="alert alert-secondary">Hiện chưa có suất chiếu cho phim này</div>{% endif %}
+{% for cinema, days in grouped.items() %}
+  <div class="card mb-3"><div class="card-header fw-semibold">{{ cinema }}</div><div class="card-body">
+  {% for day, shows in days.items() %}
+    <div class="mb-2"><strong>{{ day.strftime('%d/%m/%Y') }}</strong>
+      <div class="d-flex flex-wrap gap-2 mt-1">
+        {% for s in shows %}
+          <a class="btn btn-outline-dark btn-sm" href="{{ url_for('booking.seat_picker', sid=s.showtime_id) }}">
+            {{ s.start_time|hm }} <small class="text-muted">{{ s.room_name }} · {{ s.room_type }} · còn {{ s.free_seats }}</small></a>
+        {% endfor %}
+      </div></div>
+  {% endfor %}
+  </div></div>
+{% endfor %}
+{% endblock %}

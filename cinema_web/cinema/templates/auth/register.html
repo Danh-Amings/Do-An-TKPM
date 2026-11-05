@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Đăng ký{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6 col-lg-5">
+<div class="card"><div class="card-body p-4">
+  <h1 class="page">Đăng ký tài khoản thành viên</h1>
+  <form method="post" novalidate>
+    {{ csrf_input() }}
+    <div class="mb-3"><label class="form-label">Họ và tên</label><input class="form-control" name="full_name" value="{{ f.get('full_name','') }}"></div>
+    <div class="mb-3"><label class="form-label">Email</label><input class="form-control" type="email" name="email" value="{{ f.get('email','') }}"></div>
+    <div class="mb-3"><label class="form-label">Mật khẩu</label><input class="form-control" type="password" name="password">
+      <div class="form-text">Tối thiểu 8 ký tự, gồm chữ hoa và số.</div></div>
+    <div class="mb-3"><label class="form-label">Xác nhận mật khẩu</label><input class="form-control" type="password" name="password2"></div>
+    <button class="btn btn-brand w-100">Đăng ký</button>
+  </form>
+  <div class="mt-3 small">Đã có tài khoản? <a href="{{ url_for('auth.login') }}">Đăng nhập</a></div>
+</div></div></div></div>
+{% endblock %}

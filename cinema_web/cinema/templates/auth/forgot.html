@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Quên mật khẩu{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-5 col-lg-4">
+<div class="card"><div class="card-body p-4">
+  <h1 class="page">Quên mật khẩu</h1>
+  <form method="post">
+    {{ csrf_input() }}
+    <div class="mb-3"><label class="form-label">Email đã đăng ký</label><input class="form-control" type="email" name="email" value="{{ email }}" autofocus></div>
+    <button class="btn btn-brand w-100">Gửi mã</button>
+  </form>
+  <div class="mt-3 small"><a href="{{ url_for('auth.login') }}">Quay lại đăng nhập</a></div>
+</div></div></div></div>
+{% endblock %}

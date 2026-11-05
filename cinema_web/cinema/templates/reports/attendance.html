@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from "reports/_macros.html" import range_form, export_bar %}
+{% block title %}Báo cáo chấm công{% endblock %}
+{% block content %}
+<h1 class="page">Báo cáo chấm công &amp; vi phạm</h1>
+{{ range_form(lo, hi) }}
+{% if not rows %}<div class="alert alert-secondary">Không có dữ liệu trong khoảng thời gian đã chọn</div>{% else %}
+{{ export_bar() }}
+<div class="card mb-3"><table class="table table-sm mb-0"><thead><tr><th>Nhân viên</th><th class="text-end">Số ca</th><th class="text-end">Tổng giờ</th><th class="text-end">Vi phạm đi muộn</th><th class="text-end">Quên check-out</th></tr></thead><tbody>
+{% for name, p in per.items() %}<tr><td>{{ name }}</td><td class="text-end">{{ p.shifts }}</td><td class="text-end">{{ '%.1f'|format(p.hours) }}</td><td class="text-end">{{ p.viol }}</td><td class="text-end">{{ p.incomplete }}</td></tr>{% endfor %}</tbody></table></div>
+<div class="card"><table class="table table-sm mb-0"><thead><tr><th>Ngày</th><th>Nhân viên</th><th>Ca</th><th>Vào</th><th>Ra</th><th>Muộn</th><th>Trạng thái</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.work_date|d }}</td><td>{{ r.full_name }}</td><td>{{ r.shift_name }}</td><td>{{ r.check_in|hm }}</td><td>{{ r.check_out|hm if r.check_out else '—' }}</td><td>{{ r.late_minutes }}'{% if r.is_violation %} <span class="badge bg-danger">Vi phạm</span>{% endif %}</td><td>{{ {'IN_PROGRESS':'Đang làm','COMPLETED':'Hoàn tất','INCOMPLETE':'Chưa check-out'}[r.status] }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{% endblock %}

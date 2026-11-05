@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Suất chiếu hôm nay{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap gap-2 mb-3"><h1 class="page mb-0">Suất chiếu ngày {{ day|d }}</h1>
+  <form class="d-flex gap-2"><input type="date" class="form-control" name="date" value="{{ day.isoformat() }}"><button class="btn btn-outline-dark">Xem</button></form></div>
+<div class="card"><table class="table table-hover mb-0"><thead><tr><th>Giờ</th><th>Phim</th><th>Rạp / Phòng</th><th>Đã bán</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.start_time|hm }} - {{ r.end_time|hm }}</td><td class="fw-semibold">{{ r.title }}</td><td>{{ r.cinema }} · {{ r.room_name }} ({{ r.room_type }})</td><td>{{ r.sold }}/{{ r.total }}</td>
+  <td class="text-end text-nowrap">{% if is_role_exact('TICKET_STAFF') %}<a class="btn btn-sm btn-brand" href="{{ url_for('booking.counter_start', showtime=r.showtime_id) }}">Bán vé</a>{% endif %}
+  <a class="btn btn-sm btn-outline-dark" href="{{ url_for('booking.seat_picker', sid=r.showtime_id, view=1) }}">Sơ đồ ghế</a></td></tr>
+{% else %}<tr><td colspan="5" class="text-center text-muted py-4">Không có suất chiếu nào trong ngày</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

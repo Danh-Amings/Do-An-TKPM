@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Thanh toán{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6 col-lg-5"><div class="card card-body">
+  <h1 class="page">Cổng thanh toán {{ methods.get(pay.method, pay.method) }}</h1>
+  <p class="mb-1">Đơn hàng: <strong>{{ b.booking_code }}</strong></p>
+  <p class="mb-1">{{ b.title }} · {{ b.start_time|dt }}</p>
+  <p class="fs-4 fw-bold money">{{ pay.amount|money }}</p>
+  {% if held_until %}<p class="small text-muted">Giữ ghế đến <strong>{{ held_until|hm }}</strong> (còn <span id="left" data-until="{{ held_until.isoformat() }}"></span>)</p>{% endif %}
+  <div class="alert alert-info small">Đây là cổng thanh toán giả lập dùng cho đồ án. Chọn kết quả giao dịch để tiếp tục.</div>
+  <form method="post" class="d-grid gap-2">{{ csrf_input() }}
+    <button name="result" value="ok" class="btn btn-success">Thanh toán thành công</button>
+    <button name="result" value="fail" class="btn btn-outline-danger">Giả lập thanh toán thất bại</button>
+    <button name="result" value="cancel" class="btn btn-link text-muted">Hủy đơn hàng</button>
+  </form>
+</div></div></div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/countdown.js') }}"></script>{% endblock %}

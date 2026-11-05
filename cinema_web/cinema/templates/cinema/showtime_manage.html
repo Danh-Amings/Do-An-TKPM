@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Quản lý suất chiếu{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap gap-2 mb-3"><h1 class="page mb-0">Quản lý suất chiếu</h1>
+  <form class="d-flex gap-2"><input type="date" class="form-control" name="date" value="{{ day.isoformat() }}"><button class="btn btn-outline-dark">Xem</button></form></div>
+<form method="post" action="{{ url_for('cinema.showtime_add') }}" class="card card-body mb-3">{{ csrf_input() }}<input type="hidden" name="back" value="{{ url_for('cinema.showtime_manage', date=day.isoformat()) }}">
+  <div class="row g-2 align-items-end"><div class="col-md-4"><label class="form-label small mb-0">Phim *</label><select class="form-select" name="movie_id">{% for m in movies %}<option value="{{ m.movie_id }}">{{ m.title }} ({{ m.duration_min }}')</option>{% endfor %}</select></div>
+    <div class="col-md-3"><label class="form-label small mb-0">Phòng *</label><select class="form-select" name="room_id">{% for r in rooms %}<option value="{{ r.room_id }}">{{ r.cinema }} · {{ r.room_name }} ({{ r.room_type }})</option>{% endfor %}</select></div>
+    <div class="col-md-3"><label class="form-label small mb-0">Bắt đầu *</label><input type="datetime-local" class="form-control" name="start_time" value="{{ day.isoformat() }}T09:00"></div>
+    <div class="col-md-2"><button class="btn btn-brand w-100">+ Thêm suất</button></div></div></form>
+<div class="card"><table class="table mb-0"><thead><tr><th>Giờ</th><th>Phim</th><th>Phòng</th><th>Vé</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.start_time|hm }} - {{ r.end_time|hm }}</td><td>{{ r.title }}</td><td>{{ r.cinema }} · {{ r.room_name }}</td><td>{{ r.tickets }}</td>
+  <td><span class="badge {{ 'bg-success' if r.status=='SCHEDULED' else 'bg-secondary' }}">{{ {'SCHEDULED':'Sắp chiếu','CANCELLED':'Đã hủy','FINISHED':'Đã chiếu'}[r.status] }}</span></td>
+  <td class="text-end text-nowrap">{% if r.status=='SCHEDULED' %}<a class="btn btn-sm btn-outline-dark" href="{{ url_for('cinema.showtime_edit', sid=r.showtime_id) }}">Sửa</a>
+    <form class="d-inline" method="post" action="{{ url_for('cinema.showtime_delete', sid=r.showtime_id) }}" onsubmit="return confirm('Xác nhận xóa suất chiếu?')">{{ csrf_input() }}<input type="hidden" name="back" value="{{ url_for('cinema.showtime_manage', date=day.isoformat()) }}"><button class="btn btn-sm btn-outline-danger">Xóa</button></form>{% endif %}</td></tr>
+{% else %}<tr><td colspan="6" class="text-center text-muted py-4">Chưa có suất chiếu trong ngày</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

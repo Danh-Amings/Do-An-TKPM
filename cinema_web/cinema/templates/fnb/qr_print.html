@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}In mã QR gọi món{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3 no-print"><h1 class="page mb-0">Mã QR gọi món (ghế &amp; sảnh)</h1><button class="btn btn-brand" onclick="window.print()">In tất cả</button></div>
+<div class="row row-cols-3 row-cols-md-5 g-3">
+{% for r in rows %}<div class="col text-center" style="page-break-inside:avoid"><div class="card card-body p-2"><div class="qrbox qr mx-auto" data-size="100" data-code="{{ request.host_url }}qr/{{ r.qr_code }}"></div><div class="small mt-1">{{ r.label }}</div></div></div>
+{% else %}<div class="col-12 text-muted">Chưa có mã QR nào</div>{% endfor %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="{{ url_for('static', filename='js/qr.js') }}"></script>{% endblock %}

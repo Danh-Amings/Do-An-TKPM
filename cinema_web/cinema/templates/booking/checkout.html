@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Xác nhận đơn hàng{% endblock %}
+{% block content %}
+<h1 class="page">Xác nhận &amp; thanh toán</h1>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card card-body mb-3">
+      <h2 class="h6 fw-bold">{{ s.title }}</h2>
+      <div class="text-muted small">{{ s.room_name }} ({{ s.room_type }}) · {{ s.start_time|dt }}</div>
+      {% if c.mode == 'counter' %}<div class="small mt-1">Khách hàng: <strong>{{ customer.customer_id }}</strong></div>{% endif %}
+    </div>
+    <div class="card mb-3"><table class="table mb-0 small">
+      <thead><tr><th>Ghế</th><th>Loại vé</th><th class="text-end">Giá vé</th><th class="text-end">KM</th><th class="text-end">Đơn giá</th></tr></thead>
+      <tbody>{% for l in lines %}<tr><td>{{ l.seat }} <span class="text-muted">({{ l.seat_type }})</span></td><td>{{ l.type_name }}</td>
+        <td class="text-end money">{{ l.base|money }}</td><td class="text-end">{{ l.promo|int }}%</td><td class="text-end money">{{ l.unit|money }}</td></tr>{% endfor %}
+      {% for p, n in cl %}<tr><td colspan="2">{{ p.product_name }} × {{ n }}</td><td class="text-end money" colspan="3">{{ (p.price*n)|money }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card card-body">
+      <div class="d-flex justify-content-between"><span>Tiền vé</span><span class="money">{{ ticket_total|money }}</span></div>
+      <div class="d-flex justify-content-between"><span>Combo</span><span class="money">{{ combo_total|money }}</span></div>
+      {% if discount %}<div class="d-flex justify-content-between text-success small"><span>Đã giảm ({{ label }})</span><span class="money">-{{ discount|money }}</span></div>{% endif %}
+      <div class="d-flex justify-content-between fw-bold fs-5 border-top pt-2 mt-2"><span>Tổng thanh toán</span><span class="money">{{ total|money }}</span></div>
+      {% if held_until %}<div class="small text-muted mt-2">Ghế được giữ đến <strong>{{ held_until|hm }}</strong> (còn <span id="left" data-until="{{ held_until.isoformat() }}"></span>)</div>{% endif %}
+      <form method="post" class="mt-3">{{ csrf_input() }}
+        {% if c.mode == 'counter' %}
+          <button class="btn btn-brand w-100">Thu tiền mặt &amp; xuất vé</button>
+        {% else %}
+          <label class="form-label fw-semibold">Phương thức thanh toán</label>
+          {% for k, v in methods.items() %}<div class="form-check"><input class="form-check-input" type="radio" name="method" id="m{{ k }}" value="{{ k }}" {{ 'checked' if loop.first }}><label class="form-check-label" for="m{{ k }}">{{ v }}</label></div>{% endfor %}
+          <div class="form-check"><input class="form-check-input" type="radio" name="method" id="mCASH" value="CASH"><label class="form-check-label" for="mCASH">Thanh toán tại quầy</label></div>
+          <button class="btn btn-brand w-100 mt-3">Đặt vé &amp; thanh toán</button>
+        {% endif %}
+      </form>
+      <form method="post" action="{{ url_for('booking.cancel_cart') }}" class="mt-2">{{ csrf_input() }}<button class="btn btn-link text-danger w-100">Hủy lựa chọn</button></form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/countdown.js') }}"></script>{% endblock %}

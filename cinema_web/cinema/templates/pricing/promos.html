@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Sự kiện & khuyến mãi{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h1 class="page mb-0">Sự kiện &amp; khuyến mãi</h1><a class="btn btn-brand" href="{{ url_for('pricing.promo_add') }}">+ Thêm mới</a></div>
+<div class="card"><table class="table table-hover mb-0"><thead><tr><th>Tên</th><th>Loại</th><th>Giảm</th><th>Điều kiện</th><th>Thời gian</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+{% for p in rows %}{% set running = p.is_active and p.start_date <= today and p.end_date >= today %}
+<tr><td class="fw-semibold">{{ p.name }}</td><td>{{ PROMO_TYPES[p.promo_type] }}</td><td>{{ p.discount_percent|float|round(1) }}%</td>
+  <td class="small">{{ p.day_of_week|dow if p.day_of_week else '' }} {% if p.tier_name %}Hạng ≥ {{ p.tier_name }}{% endif %} {{ p.condition_text or '' }}</td>
+  <td class="small">{{ p.start_date|d }} - {{ p.end_date|d }}</td>
+  <td><span class="badge {{ 'bg-success' if running else 'bg-secondary' }}">{{ 'Đang chạy' if running else ('Tạm dừng' if not p.is_active else 'Ngoài thời gian') }}</span></td>
+  <td class="text-end text-nowrap"><a class="btn btn-sm btn-outline-dark" href="{{ url_for('pricing.promo_edit', pid=p.promotion_id) }}">Sửa</a>
+    <form class="d-inline" method="post" action="{{ url_for('pricing.promo_delete', pid=p.promotion_id) }}" onsubmit="return confirm('Xác nhận xóa?')">{{ csrf_input() }}<button class="btn btn-sm btn-outline-danger">Xóa</button></form></td></tr>
+{% else %}<tr><td colspan="7" class="text-center text-muted py-4">Chưa có sự kiện / khuyến mãi</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

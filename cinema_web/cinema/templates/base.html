@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Đặt vé xem phim{% endblock %} · Cinema Nhóm 11</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
+  {% block head %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark app-nav sticky-top">
+  <div class="container-xl">
+    <a class="navbar-brand fw-bold" href="{{ url_for('main.home') }}">🎬 Cinema<span class="brand-dot">N11</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+      {% if g.user %}
+      <ul class="navbar-nav me-auto">
+        {% if is_role_exact('CUSTOMER') %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('movies.movie_list') }}">Phim</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('movies.movie_search') }}">Tìm kiếm</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('cinema.schedule_view') }}">Lịch chiếu</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('booking.my_tickets') }}">Vé của tôi</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('booking.member_history') }}">Lịch sử &amp; điểm</a></li>
+        {% endif %}
+        {% if is_role_exact('TICKET_STAFF') %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('booking.counter_start') }}">Bán vé tại quầy</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('booking.counter_pending') }}">Thu tiền đơn online</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('booking.counter_lookup') }}">Đổi / hủy vé</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('cinema.showtime_today') }}">Suất chiếu hôm nay</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('fnb.staff_orders') }}">Đơn gọi món</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('cinema.schedule_export') }}">Xuất lịch chiếu</a></li>
+        {% endif %}
+        {% if is_role_exact('WAREHOUSE_STAFF') %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('fnb.receive') }}">Nhập kho</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('fnb.stock') }}">Tồn kho theo lô</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('fnb.alerts') }}">Cảnh báo hạn dùng</a></li>
+        {% endif %}
+        {% if has_role('MANAGER') %}
+          <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Danh mục</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('movies.manage_movies') }}">Quản lý phim</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('movies.genre_list') }}">Thể loại phim</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('cinema.room_list') }}">Phòng chiếu &amp; ghế</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('pricing.ticket_types') }}">Loại vé &amp; giá vé</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('pricing.promo_list') }}">Sự kiện &amp; khuyến mãi</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('fnb.qr_print') }}">In mã QR gọi món</a></li>
+            </ul></li>
+          <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Lịch chiếu</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('cinema.schedule_list') }}">Lịch chiếu tuần/tháng</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('cinema.showtime_manage') }}">Suất chiếu</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('cinema.schedule_view') }}">Xem lịch chiếu</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('cinema.schedule_export') }}">Xuất lịch chiếu</a></li>
+            </ul></li>
+          <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Nhân sự</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('hr.employee_list') }}">Nhân viên</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('hr.shift_manage') }}">Duyệt ca làm việc</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('hr.complaints_manage') }}">Khiếu nại lương</a></li>
+            </ul></li>
+          <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Kho</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('fnb.stock') }}">Tồn kho theo lô</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('fnb.alerts') }}">Cảnh báo hạn dùng</a></li>
+            </ul></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('reports.index') }}">Báo cáo</a></li>
+        {% endif %}
+        {% if is_role_exact('ADMIN') %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.accounts') }}">Tài khoản</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.settings') }}">Cấu hình hệ thống</a></li>
+        {% endif %}
+        {% if g.employee %}
+          <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Ca làm của tôi</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('hr.shift_register') }}">Đăng ký ca</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('hr.attendance') }}">Chấm công</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('hr.payslips') }}">Phiếu lương</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('hr.complaints') }}">Khiếu nại lương</a></li>
+            </ul></li>
+        {% endif %}
+      </ul>
+      <ul class="navbar-nav align-items-lg-center">
+        <li class="nav-item"><a class="nav-link position-relative" href="{{ url_for('auth.notifications') }}">🔔{% if unread %}<span class="badge rounded-pill bg-danger ms-1">{{ unread }}</span>{% endif %}</a></li>
+        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">{{ g.user.full_name }} <small class="text-white-50">({{ ROLE_LABEL[g.user.role_code] }})</small></a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">Hồ sơ cá nhân</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('auth.change_password') }}">Đổi mật khẩu</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Đăng xuất</a></li>
+          </ul></li>
+      </ul>
+      {% else %}
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Đăng nhập</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Đăng ký</a></li>
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<main class="container-xl py-4">
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% for cat, m in msgs %}
+      <div class="alert alert-{{ cat if cat in ['success','danger','warning','info'] else 'info' }} alert-dismissible fade show" role="alert">
+        {{ m }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="text-center text-muted small py-4">Rạp chiếu phim · Nhóm 11 · HCM-UTE</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

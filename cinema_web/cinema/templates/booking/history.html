@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Lịch sử & điểm{% endblock %}
+{% block content %}
+<h1 class="page">Lịch sử giao dịch &amp; điểm tích lũy</h1>
+<div class="card card-body mb-4">
+  <div class="d-flex flex-wrap gap-4 align-items-center">
+    <div><div class="text-muted small">Hạng thành viên</div><div class="fs-4 fw-bold">{{ tier.tier_name }}</div></div>
+    <div><div class="text-muted small">Điểm hiện có</div><div class="fs-4 fw-bold">{{ g.customer.total_points }}</div></div>
+    <div><div class="text-muted small">Ưu đãi</div><div class="fs-5">Giảm {{ tier.discount_percent|int }}% vé</div></div>
+    {% if nxt %}<div class="ms-auto small text-muted">Còn {{ nxt.min_points - g.customer.total_points }} điểm để lên hạng <strong>{{ nxt.tier_name }}</strong></div>{% endif %}
+  </div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-7"><h2 class="h5">Đơn đặt vé</h2><div class="card"><table class="table table-sm mb-0">
+    <thead><tr><th>Mã</th><th>Phim</th><th>Ngày đặt</th><th class="text-end">Tổng</th><th></th></tr></thead><tbody>
+    {% for b in bookings %}<tr><td><a href="{{ url_for('booking.booking_detail', bid=b.booking_id) }}">{{ b.booking_code }}</a></td><td>{{ b.title }}</td><td>{{ b.created_at|dt }}</td><td class="text-end money">{{ b.total_amount|money }}</td><td>{{ BOOKING_STATUS.get(b.status, b.status) }}</td></tr>
+    {% else %}<tr><td colspan="5" class="text-muted text-center py-3">Chưa có giao dịch</td></tr>{% endfor %}</tbody></table></div>
+    <h2 class="h5 mt-4">Đơn gọi món</h2><div class="card"><table class="table table-sm mb-0">
+    <thead><tr><th>Mã</th><th>Ngày</th><th class="text-end">Tổng</th><th>Trạng thái</th></tr></thead><tbody>
+    {% for o in orders %}<tr><td>{{ o.order_code }}</td><td>{{ o.created_at|dt }}</td><td class="text-end money">{{ o.total_amount|money }}</td><td>{{ o.status }}</td></tr>
+    {% else %}<tr><td colspan="4" class="text-muted text-center py-3">Chưa có đơn gọi món</td></tr>{% endfor %}</tbody></table></div></div>
+  <div class="col-lg-5"><h2 class="h5">Lịch sử điểm</h2><div class="card"><table class="table table-sm mb-0">
+    <thead><tr><th>Thời gian</th><th>Lý do</th><th class="text-end">Điểm</th></tr></thead><tbody>
+    {% for p in points %}<tr><td>{{ p.created_at|dt }}</td><td>{{ p.reason }}</td><td class="text-end {{ 'text-success' if p.points>0 else 'text-danger' }}">{{ '+' if p.points>0 }}{{ p.points }}</td></tr>
+    {% else %}<tr><td colspan="3" class="text-muted text-center py-3">Chưa có biến động điểm</td></tr>{% endfor %}</tbody></table></div></div>
+</div>
+{% endblock %}

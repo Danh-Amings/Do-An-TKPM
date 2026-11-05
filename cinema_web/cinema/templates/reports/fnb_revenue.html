@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "reports/_macros.html" import range_form, export_bar %}
+{% block title %}Doanh thu F&B{% endblock %}
+{% block content %}
+<h1 class="page">Báo cáo doanh thu F&amp;B</h1>
+{{ range_form(lo, hi) }}
+{% if not prods %}<div class="alert alert-secondary">Không có dữ liệu trong khoảng thời gian đã chọn</div>{% else %}
+{{ export_bar() }}
+<div class="row g-3"><div class="col-lg-6"><div class="card"><table class="table mb-0"><thead><tr><th>Sản phẩm</th><th class="text-end">Số lượng</th><th class="text-end">Doanh thu</th></tr></thead><tbody>
+{% for k, v in prods %}<tr><td>{{ k }}</td><td class="text-end">{{ v[0] }}</td><td class="text-end money">{{ v[1]|money }}</td></tr>{% endfor %}
+<tr class="fw-bold table-light"><td colspan="2">Tổng</td><td class="text-end money">{{ total|money }}</td></tr></tbody></table></div></div>
+<div class="col-lg-6"><div class="card card-body"><canvas id="ch" height="240"></canvas></div></div></div>{% endif %}
+{% endblock %}
+{% block scripts %}{% if prods %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>new Chart(document.getElementById('ch'),{type:'bar',data:{labels:{{ days|map('first')|list|tojson }},datasets:[{label:'Kèm vé',data:{{ days|map(attribute=1)|map(attribute='Kèm vé')|list|tojson }},backgroundColor:'#c81e3a'},{label:'QR Order',data:{{ days|map(attribute=1)|map(attribute='QR Order')|list|tojson }},backgroundColor:'#2b6fd6'}]},options:{scales:{x:{stacked:true},y:{stacked:true}}}});</script>{% endif %}{% endblock %}

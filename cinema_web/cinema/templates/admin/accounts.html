@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Tài khoản{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h1 class="page mb-0">Quản lý tài khoản &amp; phân quyền</h1><a class="btn btn-brand" href="{{ url_for('admin.account_add') }}">+ Tạo tài khoản</a></div>
+<div class="card"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Họ tên</th><th>Email</th><th>SĐT</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+{% for u in rows %}<tr><td>{{ u.full_name }}</td><td>{{ u.email or '—' }}</td><td>{{ u.phone or '—' }}</td><td>{{ ROLE_LABEL[u.role_code] }}</td>
+  <td><span class="badge {{ 'bg-success' if u.status=='ACTIVE' else 'bg-danger' }}">{{ 'Hoạt động' if u.status=='ACTIVE' else 'Đã khóa' }}</span></td>
+  <td class="text-end text-nowrap"><a class="btn btn-sm btn-outline-dark" href="{{ url_for('admin.account_edit', uid=u.user_id) }}">Sửa</a>
+  {% if u.user_id != g.user.user_id %}<form class="d-inline" method="post" action="{{ url_for('admin.account_delete', uid=u.user_id) }}" onsubmit="return confirm('Xác nhận xóa tài khoản?')">{{ csrf_input() }}<button class="btn btn-sm btn-outline-danger">Xóa</button></form>{% endif %}</td></tr>
+{% endfor %}</tbody></table></div></div>
+{% endblock %}

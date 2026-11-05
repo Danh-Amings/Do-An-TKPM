@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Đơn gọi món{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h1 class="page mb-0">Đơn gọi món qua QR</h1>
+  <div class="btn-group"><a class="btn btn-outline-dark {{ 'active' if show=='open' }}" href="{{ url_for('fnb.staff_orders') }}">Đang xử lý</a><a class="btn btn-outline-dark {{ 'active' if show!='open' }}" href="{{ url_for('fnb.staff_orders', show='done') }}">Đã xong / hủy</a></div></div>
+{% if not rows %}<div class="alert alert-secondary">Không có đơn nào</div>{% endif %}
+<div class="row row-cols-1 row-cols-lg-2 g-3">
+{% for o in rows %}<div class="col"><div class="card card-body">
+  <div class="d-flex justify-content-between"><strong>{{ o.order_code }}</strong><span class="badge bg-primary">{{ ORDER_STATUS[o.status] }}</span></div>
+  <div class="small text-muted">{{ o.label or 'Sảnh' }} · {{ o.full_name or 'Khách' }} · {{ o.created_at|dt }}</div>
+  <ul class="small my-2">{% for i in o['items'] %}<li>{{ i.product_name }} × {{ i.quantity }}</li>{% endfor %}</ul>
+  <div class="d-flex justify-content-between align-items-center"><span class="money fw-bold">{{ o.total_amount|money }} <span class="badge {{ 'bg-success' if o.payment_status=='PAID' else 'bg-warning text-dark' }}">{{ 'Đã thanh toán' if o.payment_status=='PAID' else 'Thu khi giao' }}</span></span>
+    {% if o.status in ('NEW','PREPARING','DELIVERING') %}<form method="post" action="{{ url_for('fnb.staff_order_status', oid=o.fb_order_id) }}" class="d-flex gap-1">{{ csrf_input() }}
+      <button class="btn btn-sm btn-brand">{{ {'NEW':'Xác nhận đơn','PREPARING':'Bắt đầu giao','DELIVERING':'Hoàn tất'}[o.status] }}</button>
+      {% if o.status=='NEW' %}<button name="action" value="cancel" class="btn btn-sm btn-outline-danger">Hủy</button>{% endif %}</form>{% endif %}</div>
+</div></div>{% endfor %}</div>
+{% endblock %}
+{% block scripts %}{% if show=='open' %}<script>setTimeout(()=>location.reload(),15000)</script>{% endif %}{% endblock %}

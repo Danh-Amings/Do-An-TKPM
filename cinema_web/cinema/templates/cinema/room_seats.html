@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Cấu hình ghế{% endblock %}
+{% block content %}
+<h1 class="page">Cấu hình loại ghế - {{ room.cinema }} / {{ room.room_name }}</h1>
+<p class="text-muted">Bấm vào ghế (hoặc tên hàng để chọn cả hàng), chọn loại ghế rồi bấm "Gán loại ghế".</p>
+<form method="post" id="f">{{ csrf_input() }}
+  <div class="card card-body mb-3">
+    <div class="screen"></div>
+    {% for row, seats in rows.items() %}
+    <div class="seat-row"><button type="button" class="btn btn-sm btn-light seat-label rowbtn" data-row="{{ row }}">{{ row }}</button>
+      {% for s in seats %}<button type="button" class="seat t-{{ s.type_name.split(' ')[0] }} {{ 'BROKEN' if not s.is_active }}" data-id="{{ s.seat_id }}" data-row="{{ row }}" title="{{ row }}{{ s.seat_number }} · {{ s.type_name }}">{{ s.seat_number }}</button>{% endfor %}</div>
+    {% endfor %}
+    <div class="small text-muted text-center mt-2">Viền màu thể hiện loại ghế hiện tại. {% for t in types %}<span class="me-2">{{ t.type_name }}{% if t.surcharge %} (+{{ t.surcharge|money }}){% endif %}</span>{% endfor %}</div>
+  </div>
+  <div class="d-flex gap-2 flex-wrap align-items-center"><select name="seat_type_id" class="form-select w-auto">{% for t in types %}<option value="{{ t.seat_type_id }}">{{ t.type_name }}</option>{% endfor %}</select>
+    <span id="n" class="text-muted small"></span><button class="btn btn-brand">Gán loại ghế</button><a class="btn btn-link" href="{{ url_for('cinema.room_list') }}">Quay lại</a></div>
+  <div id="hid"></div>
+</form>
+{% endblock %}
+{% block scripts %}<script>
+const sel=new Set(), n=document.getElementById('n');
+function paint(){document.querySelectorAll('.seat[data-id]').forEach(b=>b.classList.toggle('sel-cfg',sel.has(b.dataset.id)));
+  n.textContent=sel.size?`Đã chọn ${sel.size} ghế`:'';}
+document.querySelectorAll('.seat[data-id]').forEach(b=>b.onclick=()=>{sel.has(b.dataset.id)?sel.delete(b.dataset.id):sel.add(b.dataset.id);paint();});
+document.querySelectorAll('.rowbtn').forEach(r=>r.onclick=()=>{const bs=[...document.querySelectorAll(`.seat[data-row="${r.dataset.row}"]`)];
+  const all=bs.every(b=>sel.has(b.dataset.id)); bs.forEach(b=>all?sel.delete(b.dataset.id):sel.add(b.dataset.id)); paint();});
+document.getElementById('f').onsubmit=()=>{document.getElementById('hid').innerHTML=[...sel].map(i=>`<input type="hidden" name="seat_ids" value="${i}">`).join('');};
+</script>{% endblock %}

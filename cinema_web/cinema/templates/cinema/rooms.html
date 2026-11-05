@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Phòng chiếu{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3"><h1 class="page mb-0">Quản lý phòng chiếu</h1><a class="btn btn-brand" href="{{ url_for('cinema.room_add') }}">+ Thêm phòng chiếu</a></div>
+<div class="card"><table class="table table-hover mb-0"><thead><tr><th>Rạp</th><th>Phòng</th><th>Loại</th><th>Sức chứa</th><th>Trạng thái</th><th>Suất sắp tới</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.cinema }}</td><td class="fw-semibold">{{ r.room_name }}</td><td>{{ r.room_type }}</td><td>{{ r.capacity }}</td>
+  <td><span class="badge {{ 'bg-success' if r.status=='ACTIVE' else 'bg-secondary' }}">{{ 'Hoạt động' if r.status=='ACTIVE' else 'Ngừng sử dụng' }}</span></td><td>{{ r.active_shows }}</td>
+  <td class="text-end text-nowrap"><a class="btn btn-sm btn-outline-dark" href="{{ url_for('cinema.room_seats', room_id=r.room_id) }}">Cấu hình ghế</a>
+    <a class="btn btn-sm btn-outline-dark" href="{{ url_for('cinema.room_edit', room_id=r.room_id) }}">Sửa</a>
+    {% if r.status=='ACTIVE' %}<form class="d-inline" method="post" action="{{ url_for('cinema.room_stop', room_id=r.room_id) }}" onsubmit="return confirm('Xác nhận ngừng sử dụng phòng này?')">{{ csrf_input() }}<button class="btn btn-sm btn-outline-warning">Ngừng sử dụng</button></form>{% endif %}</td></tr>
+{% else %}<tr><td colspan="7" class="text-center text-muted py-4">Chưa có phòng chiếu nào</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

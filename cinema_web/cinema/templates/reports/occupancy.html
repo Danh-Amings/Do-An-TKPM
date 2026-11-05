@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "reports/_macros.html" import range_form, export_bar %}
+{% block title %}Tỷ lệ lấp đầy{% endblock %}
+{% block content %}
+<h1 class="page">Tỷ lệ lấp đầy phòng chiếu</h1>
+{% set extra %}<div class="col-12 col-md-4"><label class="form-label small mb-0">Phim</label><select class="form-select" name="movie"><option value="">Tất cả</option>{% for m in movies %}<option value="{{ m.movie_id }}" {{ 'selected' if movie==m.movie_id }}>{{ m.title }}</option>{% endfor %}</select></div>{% endset %}
+{{ range_form(lo, hi, extra) }}
+{% if not rows %}<div class="alert alert-secondary">Không có dữ liệu trong khoảng thời gian đã chọn</div>{% else %}
+{{ export_bar() }}<div class="mb-2">Tỷ lệ lấp đầy trung bình: <strong>{{ avg }}%</strong></div>
+<div class="card"><table class="table mb-0"><thead><tr><th>Suất chiếu</th><th>Phim</th><th>Phòng</th><th class="text-end">Vé bán</th><th class="text-end">Tổng ghế</th><th style="width:25%">Tỷ lệ</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.start_time|dt }}</td><td>{{ r.title }}</td><td>{{ r.room_name }}</td><td class="text-end">{{ r.sold }}</td><td class="text-end">{{ r.total }}</td>
+  <td><div class="progress" style="height:1.2rem"><div class="progress-bar {{ 'bg-success' if r.pct>=70 else ('bg-warning' if r.pct>=30 else 'bg-danger') }}" style="width:{{ r.pct }}%">{{ r.pct }}%</div></div></td></tr>{% endfor %}
+</tbody></table></div>{% endif %}
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Nhập kho{% endblock %}
+{% block content %}
+<h1 class="page">Nhập kho theo lô</h1>
+<form method="post" class="card card-body" style="max-width:820px">{{ csrf_input() }}
+  <div class="row g-3">
+    <div class="col-md-6"><label class="form-label">Sản phẩm / nguyên liệu *</label>
+      <select class="form-select" name="product_id" id="pid"><option value="">-- Chọn sản phẩm --</option>{% for p in products %}<option value="{{ p.product_id }}" {{ 'selected' if f.get('product_id')==p.product_id|string }}>{{ p.product_name }} ({{ p.unit }})</option>{% endfor %}</select>
+      <div class="form-text">Hoặc nhập sản phẩm mới:</div>
+      <div class="row g-1"><div class="col-12"><input class="form-control form-control-sm" name="new_product" placeholder="Tên sản phẩm mới" value="{{ f.get('new_product','') }}"></div>
+        <div class="col-4"><select class="form-select form-select-sm" name="new_category">{% for k,v in cats.items() %}<option value="{{ k }}" {{ 'selected' if k=='INGREDIENT' }}>{{ v }}</option>{% endfor %}</select></div>
+        <div class="col-4"><input class="form-control form-control-sm" name="new_unit" placeholder="Đơn vị"></div>
+        <div class="col-4"><input class="form-control form-control-sm" name="new_price" placeholder="Giá bán"></div></div></div>
+    <div class="col-md-6"><label class="form-label">Nhà cung cấp *</label>
+      <select class="form-select" name="supplier_id"><option value="">-- Chọn nhà cung cấp --</option>{% for s in suppliers %}<option value="{{ s.supplier_id }}" {{ 'selected' if f.get('supplier_id')==s.supplier_id|string }}>{{ s.name }}</option>{% endfor %}</select>
+      <div class="form-text">Hoặc nhập nhà cung cấp mới:</div><input class="form-control form-control-sm" name="new_supplier" value="{{ f.get('new_supplier','') }}"></div>
+    <div class="col-md-3"><label class="form-label">Số lượng *</label><input class="form-control" name="quantity" value="{{ f.get('quantity','') }}"></div>
+    <div class="col-md-3"><label class="form-label">Giá nhập (đ/đơn vị)</label><input class="form-control" name="unit_cost" value="{{ f.get('unit_cost','') }}"></div>
+    <div class="col-md-3"><label class="form-label">Ngày nhập</label><input type="date" class="form-control" name="import_date" value="{{ f.get('import_date') or today.isoformat() }}"></div>
+    <div class="col-md-3"><label class="form-label">Hạn sử dụng *</label><input type="date" class="form-control" name="expiry_date" value="{{ f.get('expiry_date','') }}"></div>
+    <div class="col-12"><label class="form-label">Ghi chú</label><input class="form-control" name="note" value="{{ f.get('note','') }}"></div>
+  </div>
+  <div class="small text-muted mt-2">Mã lô được hệ thống tự tạo.</div>
+  <div class="mt-3"><button class="btn btn-brand">Lập phiếu nhập kho</button> <a class="btn btn-link" href="{{ url_for('fnb.stock') }}">Xem tồn kho</a></div>
+</form>
+{% endblock %}

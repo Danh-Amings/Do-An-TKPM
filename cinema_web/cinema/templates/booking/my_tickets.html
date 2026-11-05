@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Vé của tôi{% endblock %}
+{% block content %}
+<h1 class="page">Vé của tôi</h1>
+<ul class="nav nav-pills mb-3">
+  {% for k in ['PENDING_CONFIRM','UPCOMING','IN_PROGRESS','COMPLETED','CANCELLED'] %}
+  <li class="nav-item"><a class="nav-link {{ 'active' if tab==k }}" href="{{ url_for('booking.my_tickets', tab=k) }}">{{ BOOKING_STATUS[k] }} <span class="badge bg-light text-dark">{{ counts[k] }}</span></a></li>
+  {% endfor %}
+</ul>
+{% if not rows %}<div class="alert alert-secondary">Bạn chưa có vé nào ở mục này</div>{% endif %}
+{% for b in rows %}
+<a class="text-decoration-none text-reset" href="{{ url_for('booking.booking_detail', bid=b.booking_id) }}">
+<div class="card ticket-card mb-2 card-body d-flex flex-row justify-content-between flex-wrap gap-2">
+  <div><div class="fw-semibold">{{ b.title }}</div>
+    <div class="small text-muted">{{ b.cinema }} · {{ b.room_name }} · {{ b.start_time|dt }}</div>
+    <div class="small">Mã đơn: <strong>{{ b.booking_code }}</strong></div></div>
+  <div class="text-end"><div class="money fw-bold">{{ b.total_amount|money }}</div>
+    <span class="badge bg-secondary">{{ BOOKING_STATUS[b.eff] }}</span>
+    <span class="badge {{ 'bg-success' if b.payment_status=='PAID' else 'bg-warning text-dark' }}">{{ 'Đã thanh toán' if b.payment_status=='PAID' else 'Chưa thanh toán' }}</span></div>
+</div></a>
+{% endfor %}
+{% endblock %}

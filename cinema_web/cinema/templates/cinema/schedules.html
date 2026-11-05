@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Lịch chiếu tuần/tháng{% endblock %}
+{% block content %}
+<h1 class="page">Lịch chiếu tuần / tháng</h1>
+<form method="post" action="{{ url_for('cinema.schedule_add') }}" class="card card-body mb-3">{{ csrf_input() }}
+  <div class="row g-2 align-items-end">
+    <div class="col-md-3"><label class="form-label small mb-0">Tên lịch chiếu *</label><input class="form-control" name="title" placeholder="Lịch chiếu tuần 42"></div>
+    <div class="col-md-2"><label class="form-label small mb-0">Rạp *</label><select class="form-select" name="cinema_id">{% for c in cinemas %}<option value="{{ c.cinema_id }}">{{ c.name }}</option>{% endfor %}</select></div>
+    <div class="col-md-2"><label class="form-label small mb-0">Loại</label><select class="form-select" name="period_type"><option value="WEEK">Tuần</option><option value="MONTH">Tháng</option></select></div>
+    <div class="col-md-2"><label class="form-label small mb-0">Từ ngày *</label><input type="date" class="form-control" name="start_date"></div>
+    <div class="col-md-2"><label class="form-label small mb-0">Đến ngày *</label><input type="date" class="form-control" name="end_date"></div>
+    <div class="col-md-1"><button class="btn btn-brand w-100">Tạo</button></div></div></form>
+<div class="card"><table class="table table-hover mb-0"><thead><tr><th>Lịch</th><th>Rạp</th><th>Thời gian</th><th>Số suất</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td class="fw-semibold">{{ r.title }}</td><td>{{ r.cinema }}</td><td>{{ r.start_date|d }} - {{ r.end_date|d }}</td><td>{{ r.n }}</td>
+  <td class="text-end text-nowrap"><a class="btn btn-sm btn-outline-dark" href="{{ url_for('cinema.schedule_detail', sid=r.schedule_id) }}">Chi tiết</a>
+  {% if r.end_date < today %}<form class="d-inline" method="post" action="{{ url_for('cinema.schedule_delete', sid=r.schedule_id) }}" onsubmit="return confirm('Xác nhận xóa lịch chiếu?')">{{ csrf_input() }}<button class="btn btn-sm btn-outline-danger">Xóa</button></form>{% endif %}</td></tr>
+{% else %}<tr><td colspan="5" class="text-center text-muted py-4">Chưa có lịch chiếu</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

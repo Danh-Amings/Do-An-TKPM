@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Sửa suất chiếu{% endblock %}
+{% block content %}
+<h1 class="page">Cập nhật suất chiếu</h1>
+{% if sold %}<div class="alert alert-warning">Suất chiếu đã có {{ sold }} vé bán, không thể sửa. Hãy hủy/hoàn vé trước.</div>{% endif %}
+<form method="post" class="card card-body" style="max-width:640px">{{ csrf_input() }}
+  <label class="form-label">Phim *</label><select class="form-select mb-3" name="movie_id">{% for m in movies %}<option value="{{ m.movie_id }}" {{ 'selected' if m.movie_id==s.movie_id }}>{{ m.title }}</option>{% endfor %}</select>
+  <label class="form-label">Phòng *</label><select class="form-select mb-3" name="room_id">{% for r in rooms %}<option value="{{ r.room_id }}" {{ 'selected' if r.room_id==s.room_id }}>{{ r.cinema }} · {{ r.room_name }} ({{ r.room_type }})</option>{% endfor %}</select>
+  <label class="form-label">Bắt đầu *</label><input type="datetime-local" class="form-control mb-3" name="start_time" value="{{ s.start_time.strftime('%Y-%m-%dT%H:%M') if s.start_time.strftime else s.start_time }}">
+  <div><button class="btn btn-brand" {{ 'disabled' if sold }}>Lưu</button> <a class="btn btn-link" href="{{ url_for('cinema.showtime_manage', date=s.start_time.strftime('%Y-%m-%d')) }}">Hủy</a></div>
+</form>
+{% endblock %}

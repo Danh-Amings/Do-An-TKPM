@@ -1,0 +1,11 @@
+{% macro range_form(lo, hi, extra='') %}
+<form class="card card-body mb-3 no-print"><div class="row g-2 align-items-end">
+  <div class="col-6 col-md-2"><label class="form-label small mb-0">Từ ngày</label><input type="date" class="form-control" name="from" value="{{ lo.isoformat() }}"></div>
+  <div class="col-6 col-md-2"><label class="form-label small mb-0">Đến ngày</label><input type="date" class="form-control" name="to" value="{{ hi.isoformat() }}"></div>
+  {{ extra|safe }}
+  <div class="col-auto"><button class="btn btn-brand">Xem báo cáo</button></div></div></form>
+{% endmacro %}
+{% macro export_bar() %}
+<div class="d-flex gap-2 mb-2 no-print"><a class="btn btn-sm btn-outline-dark" href="?{{ request.query_string.decode() }}{{ '&' if request.query_string }}export=csv">Xuất Excel (CSV)</a>
+  <button class="btn btn-sm btn-outline-dark" onclick="window.print()">In / Lưu PDF</button></div>
+{% endmacro %}

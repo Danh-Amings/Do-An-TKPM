@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Tồn kho theo lô{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap gap-2 mb-3"><h1 class="page mb-0">Tồn kho theo lô</h1>
+  <form class="d-flex gap-2"><select class="form-select" name="product"><option value="">Tất cả sản phẩm</option>{% for p in products %}<option value="{{ p.product_id }}" {{ 'selected' if pid==p.product_id }}>{{ p.product_name }}</option>{% endfor %}</select><button class="btn btn-outline-dark">Lọc</button></form></div>
+<div class="card"><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Mã lô</th><th>Sản phẩm</th><th>Nhà cung cấp</th><th>Ngày nhập</th><th>Hạn dùng</th><th class="text-end">Nhập</th><th class="text-end">Còn lại</th><th>Tình trạng</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.batch_code }}</td><td>{{ r.product_name }}</td><td>{{ r.supplier }}</td><td>{{ r.import_date|d }}</td><td>{{ r.expiry_date|d }}</td><td class="text-end">{{ r.qty_received }}</td><td class="text-end fw-semibold">{{ r.qty_remaining }} {{ r.unit }}</td>
+  <td>{% if r.state=='EXPIRED' %}<span class="badge bg-danger">Hết hạn</span>{% elif r.state=='NEAR_EXPIRY' %}<span class="badge bg-warning text-dark">Cận hạn ({{ r.days_left }} ngày)</span>{% elif r.state=='EMPTY' %}<span class="badge bg-secondary">Hết hàng</span>{% else %}<span class="badge bg-success">Còn hạn</span>{% endif %}</td></tr>
+{% else %}<tr><td colspan="8" class="text-center text-muted py-4">Kho chưa có lô hàng nào</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

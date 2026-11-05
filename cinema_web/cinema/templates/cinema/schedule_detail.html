@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ sc.title }}{% endblock %}
+{% block content %}
+<h1 class="page">{{ sc.title }} <small class="text-muted fs-6">{{ sc.cinema }} · {{ sc.start_date|d }} - {{ sc.end_date|d }}</small></h1>
+<div class="row g-3 mb-3">
+  <div class="col-lg-7"><form method="post" action="{{ url_for('cinema.schedule_bulk', sid=sc.schedule_id) }}" class="card card-body">{{ csrf_input() }}
+    <h2 class="h6 fw-bold">Lên lịch hàng loạt theo ngày trong tuần</h2>
+    <div class="row g-2"><div class="col-md-6"><select class="form-select" name="movie_id">{% for m in movies %}<option value="{{ m.movie_id }}">{{ m.title }}</option>{% endfor %}</select></div>
+      <div class="col-md-4"><select class="form-select" name="room_id">{% for r in rooms %}<option value="{{ r.room_id }}">{{ r.room_name }} ({{ r.room_type }})</option>{% endfor %}</select></div>
+      <div class="col-md-2"><input type="time" class="form-control" name="time" value="19:00"></div>
+      <div class="col-12">{% for n,l in [(1,'T2'),(2,'T3'),(3,'T4'),(4,'T5'),(5,'T6'),(6,'T7'),(7,'CN')] %}<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" name="dows" value="{{ n }}" id="d{{ n }}"><label class="form-check-label" for="d{{ n }}">{{ l }}</label></div>{% endfor %}</div>
+      <div class="col-12"><button class="btn btn-brand">Tạo các suất chiếu</button></div></div></form></div>
+  <div class="col-lg-5"><form method="post" action="{{ url_for('cinema.schedule_edit', sid=sc.schedule_id) }}" class="card card-body">{{ csrf_input() }}
+    <h2 class="h6 fw-bold">Cập nhật lịch chiếu</h2>
+    <input class="form-control mb-2" name="title" value="{{ sc.title }}">
+    <select class="form-select mb-2" name="period_type"><option value="WEEK" {{ 'selected' if sc.period_type=='WEEK' }}>Tuần</option><option value="MONTH" {{ 'selected' if sc.period_type=='MONTH' }}>Tháng</option></select>
+    <div class="row g-2 mb-2"><div class="col"><input type="date" class="form-control" name="start_date" value="{{ sc.start_date }}"></div><div class="col"><input type="date" class="form-control" name="end_date" value="{{ sc.end_date }}"></div></div>
+    <button class="btn btn-outline-dark">Lưu</button></form></div>
+</div>
+<div class="card"><table class="table mb-0"><thead><tr><th>Thời gian</th><th>Phim</th><th>Phòng</th><th>Vé</th><th></th></tr></thead><tbody>
+{% for s in shows %}<tr><td>{{ s.start_time|dt }}</td><td>{{ s.title }}</td><td>{{ s.room_name }}</td><td>{{ s.tickets }}</td>
+  <td class="text-end text-nowrap">{% if s.status=='SCHEDULED' %}<a class="btn btn-sm btn-outline-dark" href="{{ url_for('cinema.showtime_edit', sid=s.showtime_id) }}">Sửa</a>
+  <form class="d-inline" method="post" action="{{ url_for('cinema.showtime_delete', sid=s.showtime_id) }}" onsubmit="return confirm('Xác nhận xóa suất chiếu?')">{{ csrf_input() }}<input type="hidden" name="back" value="{{ url_for('cinema.schedule_detail', sid=sc.schedule_id) }}"><button class="btn btn-sm btn-outline-danger">Xóa</button></form>{% else %}<span class="text-muted small">{{ s.status }}</span>{% endif %}</td></tr>
+{% else %}<tr><td colspan="5" class="text-center text-muted py-3">Lịch chiếu chưa có suất nào</td></tr>{% endfor %}
+</tbody></table></div>
+<a class="btn btn-link mt-2" href="{{ url_for('cinema.schedule_list') }}">← Danh sách lịch chiếu</a>
+{% endblock %}

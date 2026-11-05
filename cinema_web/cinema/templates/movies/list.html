@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Danh sách phim{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <h1 class="page mb-0">Danh sách phim</h1>
+  <div class="btn-group">
+    <a class="btn btn-outline-dark {{ 'active' if not status }}" href="{{ url_for('movies.movie_list') }}">Tất cả</a>
+    <a class="btn btn-outline-dark {{ 'active' if status=='NOW_SHOWING' }}" href="{{ url_for('movies.movie_list', status='NOW_SHOWING') }}">Đang chiếu</a>
+    <a class="btn btn-outline-dark {{ 'active' if status=='COMING_SOON' }}" href="{{ url_for('movies.movie_list', status='COMING_SOON') }}">Sắp chiếu</a>
+  </div>
+</div>
+{% if not movies %}<div class="alert alert-secondary">Hiện chưa có phim nào</div>{% endif %}
+<div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-3">
+  {% for m in movies %}
+  <div class="col"><a class="text-decoration-none text-reset" href="{{ url_for('movies.movie_detail', movie_id=m.movie_id) }}">
+    <div class="card movie-card h-100">
+      {% if m.poster_url %}<img src="{{ m.poster_url }}" alt="">{% else %}<div class="poster-ph">{{ m.title }}</div>{% endif %}
+      <div class="card-body p-2">
+        <div class="fw-semibold">{{ m.title }}</div>
+        <div class="small text-muted">{% for gn in m.genres %}{{ gn.genre_name }}{{ ', ' if not loop.last }}{% endfor %}</div>
+        <div class="small mt-1"><span class="age">{{ m.age_rating }}</span> {{ m.duration_min }} phút · {{ STATUS_LABEL[m.status] }}</div>
+      </div></div></a></div>
+  {% endfor %}
+</div>
+{% endblock %}

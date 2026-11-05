@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+{% if is_role_exact('CUSTOMER') %}
+<form class="row g-2 mb-4" action="{{ url_for('movies.movie_search') }}" autocomplete="off">
+  <div class="col-md-9 position-relative">
+    <input class="form-control form-control-lg" name="q" id="q" placeholder="Tìm phim theo tên, diễn viên, thể loại...">
+    <div id="sugg" class="list-group position-absolute w-100 shadow" style="z-index:20"></div>
+  </div>
+  <div class="col-md-3"><button class="btn btn-brand btn-lg w-100">Tìm kiếm</button></div>
+</form>
+{% else %}
+<div class="card mb-4"><div class="card-body">
+  <h1 class="page mb-1">Xin chào, {{ g.user.full_name }}</h1>
+  <div class="text-muted">Vai trò: {{ ROLE_LABEL[g.user.role_code] }}. Chọn chức năng ở thanh menu phía trên.</div>
+</div></div>
+{% endif %}
+
+<h2 class="page">Phim đang chiếu &amp; sắp chiếu</h2>
+{% if not movies %}<p class="text-muted">Hiện chưa có phim nào</p>{% endif %}
+<div class="row row-cols-2 row-cols-md-4 g-3">
+  {% for m in movies %}
+  <div class="col"><a class="text-decoration-none text-reset" href="{{ url_for('movies.movie_detail', movie_id=m.movie_id) }}">
+    <div class="card movie-card h-100">
+      {% if m.poster_url %}<img src="{{ m.poster_url }}" alt="{{ m.title }}">{% else %}<div class="poster-ph">{{ m.title }}</div>{% endif %}
+      <div class="card-body p-2"><div class="fw-semibold">{{ m.title }}</div>
+        <small class="text-muted">{{ m.duration_min }} phút · <span class="age">{{ m.age_rating }}</span> · {{ 'Đang chiếu' if m.status=='NOW_SHOWING' else 'Sắp chiếu' }}</small></div>
+    </div></a></div>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/suggest.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Đơn {{ o.order_code }}{% endblock %}
+{% block content %}
+<h1 class="page">Đơn gọi món {{ o.order_code }}</h1>
+<div class="card card-body" style="max-width:640px">
+  <div class="mb-2">Vị trí: <strong>{{ o.label or 'Sảnh' }}</strong></div>
+  <div class="mb-2">Trạng thái: <span class="badge bg-primary">{{ ORDER_STATUS[o.status] }}</span>
+    <span class="badge {{ 'bg-success' if o.payment_status=='PAID' else 'bg-warning text-dark' }}">{{ 'Đã thanh toán' if o.payment_status=='PAID' else 'Chưa thanh toán' }}</span></div>
+  {% for i in items %}<div class="d-flex justify-content-between small"><span>{{ i.product_name }} × {{ i.quantity }}</span><span class="money">{{ (i.unit_price*i.quantity)|money }}</span></div>{% endfor %}
+  <div class="d-flex justify-content-between fw-bold border-top pt-2 mt-2"><span>Tổng</span><span class="money">{{ o.total_amount|money }}</span></div>
+  {% if o.status in ('NEW','PREPARING','DELIVERING') %}<div class="small text-muted mt-2">Trang tự cập nhật trạng thái.</div>{% endif %}
+</div>
+{% endblock %}
+{% block scripts %}{% if o.status in ('NEW','PREPARING','DELIVERING') %}<script>setTimeout(()=>location.reload(),10000)</script>{% endif %}{% endblock %}

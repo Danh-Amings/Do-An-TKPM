@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Khiếu nại lương{% endblock %}
+{% block content %}
+<h1 class="page">Khiếu nại lương của nhân viên</h1>
+{% for c in rows %}<div class="card card-body mb-2"><div class="d-flex justify-content-between"><strong>{{ c.full_name }} · phiếu {{ c.pay_month }}/{{ c.pay_year }} ({{ c.net_amount|money }})</strong><span class="badge {{ 'bg-success' if c.status=='RESPONDED' else 'bg-warning text-dark' }}">{{ 'Đã phản hồi' if c.status=='RESPONDED' else 'Chờ phản hồi' }}</span></div>
+  <div class="small my-1">{{ c.content }}</div>
+  {% if c.status=='RESPONDED' %}<div class="small text-success">Phản hồi: {{ c.response }}</div>
+  {% else %}<form method="post" class="d-flex gap-2">{{ csrf_input() }}<input type="hidden" name="complaint_id" value="{{ c.complaint_id }}"><input class="form-control form-control-sm" name="response" placeholder="Nội dung phản hồi"><button class="btn btn-sm btn-brand text-nowrap">Phản hồi</button></form>{% endif %}</div>
+{% else %}<div class="alert alert-secondary">Chưa có khiếu nại nào</div>{% endfor %}
+{% endblock %}

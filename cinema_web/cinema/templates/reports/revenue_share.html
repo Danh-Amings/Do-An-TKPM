@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "reports/_macros.html" import range_form, export_bar %}
+{% block title %}Chia sẻ doanh thu{% endblock %}
+{% block content %}
+<h1 class="page">Chia sẻ doanh thu với nhà phát hành</h1>
+{% set extra %}<div class="col-6 col-md-3"><label class="form-label small mb-0">Nhà phát hành</label><select class="form-select" name="distributor"><option value="">Tất cả</option>{% for d in distributors %}<option value="{{ d.distributor_id }}" {{ 'selected' if dist==d.distributor_id }}>{{ d.name }}</option>{% endfor %}</select></div>
+<div class="col-6 col-md-3"><label class="form-label small mb-0">Phim</label><select class="form-select" name="movie"><option value="">Tất cả</option>{% for m in movies %}<option value="{{ m.movie_id }}" {{ 'selected' if movie==m.movie_id }}>{{ m.title }}</option>{% endfor %}</select></div>{% endset %}
+{{ range_form(lo, hi, extra) }}
+{% if not rows %}<div class="alert alert-secondary">Không có hợp đồng phát hành phù hợp</div>{% else %}
+{{ export_bar() }}
+<div class="card"><table class="table mb-0"><thead><tr><th>Nhà phát hành</th><th>Phim</th><th class="text-end">Doanh thu vé</th><th class="text-end">Tỷ lệ</th><th class="text-end">Trả nhà phát hành</th><th class="text-end">Rạp giữ lại</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.distributor }}</td><td>{{ r.title }}</td><td class="text-end money">{{ r.revenue|money }}</td><td class="text-end">{{ r.share_percent|float }}%</td><td class="text-end money">{{ r.share|money }}</td><td class="text-end money">{{ r.keep|money }}</td></tr>{% endfor %}
+<tr class="fw-bold table-light"><td colspan="2">Tổng</td><td class="text-end money">{{ total|money }}</td><td></td><td class="text-end money">{{ total_share|money }}</td><td class="text-end money">{{ (total-total_share)|money }}</td></tr></tbody></table></div>{% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Sửa phòng chiếu' if room else 'Thêm phòng chiếu' }}{% endblock %}
+{% block content %}
+<h1 class="page">{{ 'Cập nhật phòng chiếu' if room else 'Thêm phòng chiếu' }}</h1>
+<form method="post" class="card card-body" style="max-width:640px">{{ csrf_input() }}
+  {% if not room %}<label class="form-label">Rạp *</label><select class="form-select mb-3" name="cinema_id">{% for c in cinemas %}<option value="{{ c.cinema_id }}">{{ c.name }}</option>{% endfor %}</select>{% endif %}
+  <label class="form-label">Tên phòng *</label><input class="form-control mb-3" name="room_name" value="{{ request.form.get('room_name') or (room.room_name if room) or '' }}">
+  <label class="form-label">Loại phòng *</label><select class="form-select mb-3" name="room_type">{% for t in types %}<option {{ 'selected' if (request.form.get('room_type') or (room.room_type if room))==t }}>{{ t }}</option>{% endfor %}</select>
+  <label class="form-label">Sức chứa (số ghế) *</label><input class="form-control mb-3" name="capacity" value="{{ request.form.get('capacity') or (room.capacity if room) or '' }}">
+  {% if room %}<label class="form-label">Trạng thái</label><select class="form-select mb-3" name="status"><option value="ACTIVE" {{ 'selected' if room.status=='ACTIVE' }}>Hoạt động</option><option value="INACTIVE" {{ 'selected' if room.status=='INACTIVE' }}>Ngừng sử dụng</option></select>{% endif %}
+  <div><button class="btn btn-brand">Lưu</button> <a class="btn btn-link" href="{{ url_for('cinema.room_list') }}">Hủy</a></div>
+</form>
+{% endblock %}

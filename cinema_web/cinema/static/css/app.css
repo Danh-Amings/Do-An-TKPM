@@ -1,0 +1,30 @@
+:root { --brand:#c81e3a; --ink:#1b1f2a; --paper:#f6f4f1; }
+body { background: var(--paper); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.app-nav { background: #141821; }
+.brand-dot { color: var(--brand); }
+.btn-brand { background: var(--brand); border-color: var(--brand); color:#fff; }
+.btn-brand:hover { background:#a8182f; border-color:#a8182f; color:#fff; }
+.card { border: 0; box-shadow: 0 1px 3px rgba(20,24,33,.12); }
+h1.page, h2.page { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+.movie-card img, .poster { width:100%; aspect-ratio: 2/3; object-fit: cover; background:#d9d4cc; }
+.poster-ph { width:100%; aspect-ratio:2/3; background:linear-gradient(160deg,#2a3042,#141821); color:#fff; display:flex; align-items:center; justify-content:center; text-align:center; padding:1rem; font-weight:600; }
+.age { display:inline-block; font-size:.75rem; font-weight:700; padding:.1rem .45rem; border-radius:.25rem; background:var(--brand); color:#fff; }
+.table > :not(caption) > * > * { vertical-align: middle; }
+.money { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* sơ đồ ghế */
+.screen { height:8px; background:linear-gradient(90deg,transparent,#8a8f9c,transparent); border-radius:50%; margin:0 auto 1.5rem; width:70%; }
+.seat-row { display:flex; gap:6px; justify-content:center; margin-bottom:6px; align-items:center; }
+.seat-label { width:1.5rem; font-weight:700; color:#6b7080; text-align:center; }
+.seat { width:34px; height:30px; border-radius:6px 6px 3px 3px; border:2px solid #8a8f9c; background:#fff; font-size:.7rem; padding:0; cursor:pointer; line-height:1; }
+.seat.t-VIP { border-color:#c9941a; } .seat.t-Sweetbox { border-color:#d6458a; } .seat.t-Ghế { border-color:#7a4bd1; }
+.seat.HELD { background:#f3d98b; border-color:#c9a227; cursor:not-allowed; }
+.seat.SOLD { background:#4a4f5c; border-color:#4a4f5c; color:#fff; cursor:not-allowed; }
+.seat.BROKEN { background:#e9e9e9; border-style:dashed; color:#aaa; cursor:not-allowed; }
+.seat.mine, .seat.picked { background:var(--brand); border-color:var(--brand); color:#fff; }
+.seat.sel-cfg { background:#2b6fd6; border-color:#2b6fd6; color:#fff; }
+.legend span.dot { display:inline-block; width:14px; height:14px; border-radius:3px; border:2px solid #8a8f9c; vertical-align:-2px; margin-right:.25rem; }
+.otp-box { width:3rem; height:3.5rem; text-align:center; font-size:1.5rem; }
+.ticket-card { border-left: 6px solid var(--brand); }
+.qr { background:#fff; padding:6px; display:inline-block; }
+@media print { .app-nav, footer, .no-print, .alert { display:none !important; } body { background:#fff; } .card { box-shadow:none; border:1px solid #ccc; } }

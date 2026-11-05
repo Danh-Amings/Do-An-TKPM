@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Thể loại phim{% endblock %}
+{% block content %}
+<h1 class="page">Quản lý thể loại phim</h1>
+<form class="row g-2 mb-3" method="post" action="{{ url_for('movies.genre_add') }}">{{ csrf_input() }}
+  <div class="col-sm-6 col-md-4"><input class="form-control" name="genre_name" placeholder="Tên thể loại mới"></div>
+  <div class="col-auto"><button class="btn btn-brand">Thêm thể loại</button></div>
+</form>
+<div class="card"><table class="table mb-0">
+  <thead><tr><th>Thể loại</th><th>Số phim</th><th></th></tr></thead><tbody>
+  {% for g_ in rows %}
+    <tr><td>
+      {% if edit == g_.genre_id %}
+        <form class="d-flex gap-2" method="post" action="{{ url_for('movies.genre_edit', gid=g_.genre_id) }}">{{ csrf_input() }}
+          <input class="form-control form-control-sm" name="genre_name" value="{{ g_.genre_name }}"><button class="btn btn-sm btn-brand">Lưu</button></form>
+      {% else %}{{ g_.genre_name }}{% endif %}</td>
+      <td>{{ g_.n }}</td>
+      <td class="text-end"><a class="btn btn-sm btn-outline-dark" href="{{ url_for('movies.genre_list', edit=g_.genre_id) }}">Sửa</a>
+        <form class="d-inline" method="post" action="{{ url_for('movies.genre_delete', gid=g_.genre_id) }}" onsubmit="return confirm('Xác nhận xóa thể loại?')">{{ csrf_input() }}<button class="btn btn-sm btn-outline-danger">Xóa</button></form></td></tr>
+  {% else %}<tr><td colspan="3" class="text-muted text-center py-3">Chưa có thể loại nào</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

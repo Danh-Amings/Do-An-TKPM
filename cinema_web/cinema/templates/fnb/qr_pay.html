@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Thanh toán đơn gọi món{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6 col-lg-5"><div class="card card-body">
+  <h1 class="page">Thanh toán {{ methods.get(pay.method, pay.method) }}</h1>
+  <p class="mb-1">Đơn gọi món: <strong>{{ o.order_code }}</strong> · {{ o.label or 'Sảnh' }}</p>
+  <p class="fs-4 fw-bold money">{{ pay.amount|money }}</p>
+  <div class="alert alert-info small">Cổng thanh toán giả lập dùng cho đồ án.</div>
+  <form method="post" class="d-grid gap-2">{{ csrf_input() }}
+    <button name="result" value="ok" class="btn btn-success">Thanh toán thành công</button>
+    <button name="result" value="fail" class="btn btn-outline-danger">Giả lập thanh toán thất bại</button></form>
+</div></div></div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Chấm công{% endblock %}
+{% block content %}
+<h1 class="page">Chấm công</h1>
+<div class="card card-body mb-4"><div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+  <div><div class="text-muted small">Giờ hệ thống</div><div class="fs-3 fw-bold" id="clk">{{ now.strftime('%H:%M:%S') }}</div></div>
+  <form method="post" class="d-flex gap-2">{{ csrf_input() }}<button name="action" value="in" class="btn btn-success">Check-in</button><button name="action" value="out" class="btn btn-outline-dark">Check-out</button></form></div>
+  <h2 class="h6 fw-bold mt-3">Ca làm hôm nay</h2>
+  {% for t in todays %}<div class="small">{{ t.shift_name }} ({{ t.start_time|hm }}-{{ t.end_time|hm }}): {% if t.check_in %}vào {{ t.check_in|hm }}{% if t.check_out %}, ra {{ t.check_out|hm }}{% endif %}{% if t.is_violation %} <span class="badge bg-danger">Đi muộn {{ t.late_minutes }}'</span>{% endif %}{% else %}<span class="text-muted">chưa check-in</span>{% endif %}</div>
+  {% else %}<div class="small text-muted">Hôm nay bạn chưa có ca làm việc được duyệt</div>{% endfor %}</div>
+<h2 class="h5">Lịch sử chấm công</h2>
+<div class="card"><table class="table table-sm mb-0"><thead><tr><th>Ngày</th><th>Ca</th><th>Vào</th><th>Ra</th><th>Muộn</th><th>Trạng thái</th></tr></thead><tbody>
+{% for h in history %}<tr><td>{{ h.work_date|d }}</td><td>{{ h.shift_name }}</td><td>{{ h.check_in|hm }}</td><td>{{ h.check_out|hm if h.check_out else '—' }}</td><td>{{ h.late_minutes }}'{% if h.is_violation %} <span class="badge bg-danger">Vi phạm</span>{% endif %}</td>
+  <td>{{ {'IN_PROGRESS':'Đang làm','COMPLETED':'Hoàn tất','INCOMPLETE':'Chưa check-out'}[h.status] }}</td></tr>
+{% else %}<tr><td colspan="6" class="text-center text-muted py-3">Chưa có dữ liệu chấm công</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}
+{% block scripts %}<script>let t=new Date("{{ now.isoformat() }}").getTime(),c=document.getElementById('clk');setInterval(()=>{t+=1000;c.textContent=new Date(t).toTimeString().slice(0,8)},1000)</script>{% endblock %}

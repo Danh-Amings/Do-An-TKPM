@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Khiếu nại lương{% endblock %}
+{% block content %}
+<h1 class="page">Khiếu nại lương</h1>
+<form method="post" class="card card-body mb-4" style="max-width:680px">{{ csrf_input() }}
+  <label class="form-label">Phiếu lương *</label><select class="form-select mb-2" name="payslip_id"><option value="">-- Chọn phiếu lương --</option>{% for s in slips %}<option value="{{ s.payslip_id }}">{{ s.pay_month }}/{{ s.pay_year }} - {{ s.net_amount|money }}</option>{% endfor %}</select>
+  <label class="form-label">Nội dung khiếu nại *</label><textarea class="form-control mb-2" rows="3" name="content"></textarea><button class="btn btn-brand align-self-start">Gửi khiếu nại</button></form>
+<h2 class="h5">Khiếu nại đã gửi</h2>
+{% for c in rows %}<div class="card card-body mb-2"><div class="d-flex justify-content-between"><strong>Phiếu lương {{ c.pay_month }}/{{ c.pay_year }}</strong><span class="badge {{ 'bg-success' if c.status=='RESPONDED' else 'bg-warning text-dark' }}">{{ 'Đã phản hồi' if c.status=='RESPONDED' else 'Chờ phản hồi' }}</span></div>
+  <div class="small">{{ c.content }}</div>{% if c.response %}<div class="small mt-1 text-success">Phản hồi: {{ c.response }}</div>{% endif %}</div>
+{% else %}<div class="text-muted">Bạn chưa gửi khiếu nại nào</div>{% endfor %}
+{% endblock %}

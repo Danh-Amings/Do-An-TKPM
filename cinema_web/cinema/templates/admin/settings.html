@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Cấu hình hệ thống{% endblock %}
+{% block content %}
+<h1 class="page">Cấu hình tham số hệ thống</h1>
+<form method="post">{{ csrf_input() }}
+  <div class="card card-body mb-3"><h2 class="h6 fw-bold">Tham số chung</h2>
+    {% for s in settings %}<div class="row g-2 mb-2 align-items-center"><div class="col-md-4"><code>{{ s.setting_key }}</code></div>
+      <div class="col-md-3"><input class="form-control form-control-sm" name="s_{{ s.setting_key }}" value="{{ s.setting_value }}"></div><div class="col-md-5 small text-muted">{{ s.description or '' }}</div></div>{% endfor %}</div>
+  <div class="card card-body mb-3"><h2 class="h6 fw-bold">Hạng thành viên - % giảm giá</h2>
+    {% for t in tiers %}<div class="row g-2 mb-2 align-items-center"><div class="col-md-4">{{ t.tier_name }} <span class="text-muted small">(từ {{ t.min_points }} điểm)</span></div>
+      <div class="col-md-3"><input class="form-control form-control-sm" name="t_{{ t.tier_id }}" value="{{ t.discount_percent|float }}"></div></div>{% endfor %}</div>
+  <div class="card card-body mb-3"><h2 class="h6 fw-bold">Giá vé &amp; ngày ưu đãi (tham khảo)</h2>
+    <div class="small text-muted mb-2">Chỉnh giá vé tại <a href="{{ url_for('pricing.ticket_types') }}">Loại vé &amp; giá vé</a>, ngày ưu đãi tại <a href="{{ url_for('pricing.promo_list') }}">Sự kiện &amp; khuyến mãi</a>.</div>
+    <div class="row"><div class="col-md-6">{% for t in types %}<div>{{ t.type_name }}: <strong>{{ t.base_price|money }}</strong></div>{% endfor %}</div>
+    <div class="col-md-6">{% for p in promos %}<div>{{ p.name }}: <strong>{{ p.discount_percent|float }}%</strong> {{ p.day_of_week|dow if p.day_of_week else '' }}</div>{% endfor %}</div></div></div>
+  <button class="btn btn-brand">Lưu cấu hình</button>
+</form>
+{% endblock %}

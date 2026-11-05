@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Nhân viên{% endblock %}
+{% block content %}
+<h1 class="page">{{ 'Cập nhật thông tin nhân viên' if edit else 'Thêm nhân viên' }}</h1>
+<form method="post" class="card card-body" style="max-width:760px">{{ csrf_input() }}
+  <div class="row g-3">
+    <div class="col-md-6"><label class="form-label">Họ tên *</label><input class="form-control" name="full_name" value="{{ e.get('full_name') or '' }}"></div>
+    <div class="col-md-6"><label class="form-label">Số điện thoại *</label><input class="form-control" name="phone" value="{{ e.get('phone') or '' }}"></div>
+    <div class="col-md-6"><label class="form-label">Email (tên đăng nhập) {{ '' if edit else '*' }}</label><input class="form-control" name="email" value="{{ e.get('email') or '' }}" {{ 'disabled' if edit }}></div>
+    {% if not edit %}<div class="col-md-6"><label class="form-label">Mật khẩu ban đầu *</label><input type="password" class="form-control" name="password" autocomplete="new-password"><div class="form-text">Tối thiểu 8 ký tự, gồm chữ hoa và số</div></div>{% endif %}
+    <div class="col-md-6"><label class="form-label">Chức vụ *</label><input class="form-control" name="position" value="{{ e.get('position') or '' }}"></div>
+    <div class="col-md-6"><label class="form-label">Vai trò hệ thống *</label><select class="form-select" name="role_code">{% for k,v in roles.items() %}<option value="{{ k }}" {{ 'selected' if e.get('role_code')==k }}>{{ v }}</option>{% endfor %}</select></div>
+    <div class="col-md-4"><label class="form-label">Hình thức làm việc</label><select class="form-select" name="employment_type">{% for k,v in types.items() %}<option value="{{ k }}" {{ 'selected' if e.get('employment_type')==k }}>{{ v }}</option>{% endfor %}</select></div>
+    <div class="col-md-4"><label class="form-label">Lương theo giờ (đ)</label><input class="form-control" name="hourly_wage" value="{{ e.get('hourly_wage')|int if e.get('hourly_wage') else 0 }}"></div>
+    {% if not edit %}<div class="col-md-4"><label class="form-label">Ngày vào làm</label><input type="date" class="form-control" name="hire_date" value="{{ e.get('hire_date') or '' }}"></div>{% endif %}
+  </div>
+  <div class="mt-3"><button class="btn btn-brand">Lưu</button> <a class="btn btn-link" href="{{ url_for('hr.employee_list') }}">Hủy</a></div>
+</form>
+{% endblock %}

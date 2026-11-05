@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Phiếu lương{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap gap-2 mb-3"><h1 class="page mb-0">Phiếu lương</h1>
+  {% if is_mgr %}<form method="post" class="d-flex gap-2">{{ csrf_input() }}<input class="form-control" style="width:5rem" name="month" value="{{ today.month }}"><input class="form-control" style="width:6rem" name="year" value="{{ today.year }}"><button class="btn btn-brand">Tính lương tháng</button></form>{% endif %}</div>
+<div class="card"><table class="table mb-0"><thead><tr>{% if is_mgr %}<th>Nhân viên</th>{% endif %}<th>Kỳ lương</th><th class="text-end">Số giờ</th><th class="text-end">Lương gộp</th><th class="text-end">Khấu trừ</th><th class="text-end">Thực nhận</th></tr></thead><tbody>
+{% for p in rows %}<tr>{% if is_mgr %}<td>{{ p.full_name }}</td>{% endif %}<td>{{ p.pay_month }}/{{ p.pay_year }}</td><td class="text-end">{{ p.total_hours|float|round(2) }}</td><td class="text-end money">{{ p.gross_amount|money }}</td><td class="text-end money">{{ p.deduction|money }}</td><td class="text-end money fw-bold">{{ p.net_amount|money }}</td></tr>
+{% else %}<tr><td colspan="6" class="text-center text-muted py-4">Chưa có phiếu lương</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

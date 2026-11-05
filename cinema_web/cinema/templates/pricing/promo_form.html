@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Sự kiện / khuyến mãi{% endblock %}
+{% block content %}
+<h1 class="page">{{ 'Cập nhật' if p.promotion_id else 'Thêm' }} sự kiện / khuyến mãi</h1>
+<form method="post" class="card card-body">{{ csrf_input() }}
+  <div class="row g-3">
+    <div class="col-md-6"><label class="form-label">Tên *</label><input class="form-control" name="name" value="{{ p.name or '' }}"></div>
+    <div class="col-md-3"><label class="form-label">Loại</label><select class="form-select" name="promo_type">{% for k,v in PROMO_TYPES.items() %}<option value="{{ k }}" {{ 'selected' if p.promo_type==k }}>{{ v }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><label class="form-label">Mức giảm (%)</label><input class="form-control" name="discount_percent" value="{{ p.discount_percent|float if p.discount_percent is not none else 0 }}"></div>
+    <div class="col-md-3"><label class="form-label">Từ ngày *</label><input type="date" class="form-control" name="start_date" value="{{ p.start_date or '' }}"></div>
+    <div class="col-md-3"><label class="form-label">Đến ngày *</label><input type="date" class="form-control" name="end_date" value="{{ p.end_date or '' }}"></div>
+    <div class="col-md-3"><label class="form-label">Áp dụng ngày</label><select class="form-select" name="day_of_week"><option value="">Mọi ngày</option>{% for n in range(1,8) %}<option value="{{ n }}" {{ 'selected' if p.day_of_week|string==n|string }}>{{ n|dow }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><label class="form-label">Hạng tối thiểu</label><select class="form-select" name="min_tier_id"><option value="">Không yêu cầu</option>{% for t in tiers %}<option value="{{ t.tier_id }}" {{ 'selected' if p.min_tier_id|string==t.tier_id|string }}>{{ t.tier_name }}</option>{% endfor %}</select></div>
+    <div class="col-12"><label class="form-label">Điều kiện áp dụng</label><input class="form-control" name="condition_text" value="{{ p.condition_text or '' }}"></div>
+    <div class="col-12"><label class="form-label">Mô tả</label><textarea class="form-control" rows="2" name="description">{{ p.description or '' }}</textarea></div>
+    <div class="col-12"><div class="form-check form-switch"><input type="hidden" name="is_active" value="0"><input class="form-check-input" type="checkbox" name="is_active" value="1" id="ac" {{ 'checked' if p.is_active }}><label class="form-check-label" for="ac">Đang kích hoạt</label></div></div>
+  </div>
+  <div class="mt-3"><button class="btn btn-brand">Lưu</button> <a class="btn btn-link" href="{{ url_for('pricing.promo_list') }}">Hủy</a></div>
+</form>
+{% endblock %}

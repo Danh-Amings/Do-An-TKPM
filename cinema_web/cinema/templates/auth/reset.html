@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Đặt lại mật khẩu{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-5 col-lg-4">
+<div class="card"><div class="card-body p-4">
+  <h1 class="page">Đặt lại mật khẩu</h1>
+  <form method="post">
+    {{ csrf_input() }}
+    <div class="mb-3"><label class="form-label">Mật khẩu mới</label><input class="form-control" type="password" name="password" autofocus></div>
+    <div class="mb-3"><label class="form-label">Xác nhận mật khẩu mới</label><input class="form-control" type="password" name="password2"></div>
+    <button class="btn btn-brand w-100">Xác nhận</button>
+  </form>
+</div></div></div></div>
+{% endblock %}

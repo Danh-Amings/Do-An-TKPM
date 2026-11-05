@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Loại vé & giá vé{% endblock %}
+{% block content %}
+<h1 class="page">Loại vé &amp; giá vé</h1>
+<form method="post" action="{{ url_for('pricing.ticket_type_add') }}" class="card card-body mb-3">{{ csrf_input() }}
+  <div class="row g-2 align-items-end">
+    <div class="col-md-3"><label class="form-label small mb-0">Tên loại vé *</label><input class="form-control" name="type_name"></div>
+    <div class="col-md-2"><label class="form-label small mb-0">Loại phòng áp dụng</label><select class="form-select" name="room_type"><option value="">Tất cả</option>{% for t in types %}<option>{{ t }}</option>{% endfor %}</select></div>
+    <div class="col-md-2"><label class="form-label small mb-0">Giá cơ bản (đ) *</label><input class="form-control" name="base_price"></div>
+    <div class="col-md-2"><label class="form-label small mb-0">Khung giờ từ</label><input type="time" class="form-control" name="time_from"></div>
+    <div class="col-md-2"><label class="form-label small mb-0">đến</label><input type="time" class="form-control" name="time_to"></div>
+    <div class="col-md-1"><button class="btn btn-brand w-100">Thêm</button></div>
+  </div></form>
+<div class="card"><table class="table mb-0"><thead><tr><th>Loại vé</th><th>Phòng</th><th>Giá cơ bản</th><th>Quy tắc giá theo khung giờ</th><th></th></tr></thead><tbody>
+{% for t in rows %}<tr class="{{ 'text-muted' if not t.is_active }}"><td class="fw-semibold">{{ t.type_name }}{% if not t.is_active %} <span class="badge bg-secondary">Ngừng</span>{% endif %}</td><td>{{ t.room_type or 'Tất cả' }}</td><td class="money">{{ t.base_price|money }}</td>
+  <td class="small">{% for r in rules.get(t.ticket_type_id, []) %}<div>{{ r.day_of_week|dow if r.day_of_week else 'Mọi ngày' }} {{ r.time_from|hm }}-{{ r.time_to|hm }}: <strong>{{ r.price|money }}</strong></div>{% else %}<span class="text-muted">—</span>{% endfor %}</td>
+  <td class="text-end"><a class="btn btn-sm btn-outline-dark" href="{{ url_for('pricing.ticket_type_edit', tid=t.ticket_type_id) }}">Sửa giá</a></td></tr>
+{% else %}<tr><td colspan="5" class="text-center text-muted py-4">Chưa có loại vé nào</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

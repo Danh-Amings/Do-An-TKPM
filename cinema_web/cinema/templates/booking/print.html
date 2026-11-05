@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}In vé {{ b.booking_code }}{% endblock %}
+{% block content %}
+<div class="no-print mb-3"><button class="btn btn-brand" onclick="window.print()">In vé</button>
+  <a class="btn btn-link" href="{{ url_for('booking.booking_detail', bid=b.booking_id) }}">Quay lại đơn</a></div>
+{% for t in tickets if t.status=='VALID' %}
+<div class="card ticket-card card-body mb-3" style="page-break-inside:avoid">
+  <div class="d-flex justify-content-between align-items-center">
+    <div><div class="h5 mb-1">{{ b.title }}</div>
+      <div>{{ b.cinema }} · {{ b.room_name }} ({{ b.room_type }})</div>
+      <div>Suất chiếu: <strong>{{ b.start_time|dt }}</strong></div>
+      <div>Ghế: <strong class="fs-4">{{ t.row_label }}{{ t.seat_number }}</strong> · {{ t.type_name }}</div>
+      <div class="small text-muted">Mã đơn {{ b.booking_code }} · {{ t.unit_price|money }}</div></div>
+    <div class="qrbox qr" data-code="{{ t.qr_code }}" data-size="120"></div>
+  </div></div>
+{% endfor %}
+{% if items %}<div class="card card-body small">Combo: {% for i in items %}{{ i.product_name }} × {{ i.quantity }}{{ ', ' if not loop.last }}{% endfor %}</div>{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="{{ url_for('static', filename='js/qr.js') }}"></script>
+{% endblock %}
